@@ -5,24 +5,22 @@ const Header = (props) => {
   )
 }
 
-
+const Part = (props) => {
+  return (
+    <p>{props.title} {props.exercise_count}</p>
+  )
+}
 
 const Content = (props) => {
   //TODO: Should use a loop to create each <p>, but need to understand if I can create a string of html tags for react.
   // Remember, React components need a single parent container, so the empty tag allows that without adding an extra div.
-    return (
-      <>
-        <p>
-          {props.parts[0]} {props.exercises[0]}
-        </p>
-        <p>
-          {props.parts[1]} {props.exercises[1]}
-        </p>
-        <p>
-          {props.parts[2]} {props.exercises[2]}
-        </p>
-      </>
-    )
+  return (
+    <>
+      <Part title={props.parts[0]} exercise_count={props.exercises[0]}/>
+      <Part title={props.parts[1]} exercise_count={props.exercises[1]}/>
+      <Part title={props.parts[2]} exercise_count={props.exercises[2]}/>
+    </>
+  )
 
 
 } 
