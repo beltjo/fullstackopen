@@ -16,9 +16,9 @@ const Content = (props) => {
   // Remember, React components need a single parent container, so the empty tag allows that without adding an extra div.
   return (
     <>
-      <Part title={props.parts[0]} exercise_count={props.exercises[0]}/>
-      <Part title={props.parts[1]} exercise_count={props.exercises[1]}/>
-      <Part title={props.parts[2]} exercise_count={props.exercises[2]}/>
+      <Part title={props.parts[0].name} exercise_count={props.parts[0].exercises}/>
+      <Part title={props.parts[1].name} exercise_count={props.parts[1].exercises}/>
+      <Part title={props.parts[2].name} exercise_count={props.parts[2].exercises}/>
     </>
   )
 
@@ -26,8 +26,10 @@ const Content = (props) => {
 } 
 
 const Total = (props) => {
+  const exercises = props.parts.map(part => part.exercises)
+
   let total = 0
-  for (const x of props.exercises){
+  for (const x of exercises){
     total += x
   }
 
@@ -38,21 +40,27 @@ const Total = (props) => {
 
 const App = () => {
   const course = 'Half Stack application development'
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-  const part3 = 'State of a component'
-  const exercises3 = 14
-
-  const parts = [part1, part2, part3]
-  const exercises = [exercises1, exercises2, exercises3]
+  const parts = [
+    {
+      name: 'Fundamentals of React',
+      exercises: 10
+    },
+    {
+      name: 'Using props to pass data',
+      exercises: 7
+    },
+    {
+      name: 'State of a component',
+      exercises: 14
+    }
+  ]
+  
 
   return (
     <div>
       <Header course={course}/>
-      <Content parts={parts} exercises={exercises} />
-      <Total exercises={exercises}/>
+      <Content parts={parts} />
+      <Total parts={parts}/>
     </div>
   )
 }
