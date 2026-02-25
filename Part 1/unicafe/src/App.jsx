@@ -17,7 +17,7 @@ const Display = ({value}) => {
 
 }
 
-const Stats = ({feedback}) => {
+const Stats = ({feedback, feedbackCounts}) => {
   //This isn't quite the functional style, but I'm not sure if it is worth using useState for a total and score value.
   let total = 0
   let score = 0
@@ -34,8 +34,7 @@ const Stats = ({feedback}) => {
   if (total === 0) {
     return (
       <>
-        <p>all {total}</p>
-        <p>Add feedback to see more statistics</p>
+        <p>No feedback given</p>
       </>
     )
   }
@@ -44,6 +43,7 @@ const Stats = ({feedback}) => {
   const positivePercent = (positiveCount / total) * 100
   return (
     <>
+      {feedbackCounts}
       <p>all {total}</p>
       <p>average {average}</p>
       <p>positive {positivePercent} %</p>
@@ -53,11 +53,11 @@ const Stats = ({feedback}) => {
 
 const Statistics = ({feedback}) => {
   let buttons = []
-  let output = []
+  let feedbackCounts = []
 
   for (let feedbackType of feedback) {
     buttons.push(<Button value={feedbackType}></Button>)
-    output.push(<Display value={feedbackType}></Display>)
+    feedbackCounts.push(<Display value={feedbackType}></Display>)
   }
 
   return (
@@ -65,8 +65,7 @@ const Statistics = ({feedback}) => {
       <h1>Give Feedback</h1>
       {buttons}
       <h1>Statistics</h1>
-      {output}
-      <Stats feedback={feedback} />
+      <Stats feedbackCounts={feedbackCounts} feedback={feedback} />
     </>
   )
 }
