@@ -51,13 +51,31 @@ const Stats = ({feedback}) => {
   )
 }
 
+const Statistics = ({feedback}) => {
+  let buttons = []
+  let output = []
+
+  for (let feedbackType of feedback) {
+    buttons.push(<Button value={feedbackType}></Button>)
+    output.push(<Display value={feedbackType}></Display>)
+  }
+
+  return (
+    <>
+      <h1>Give Feedback</h1>
+      {buttons}
+      <h1>Statistics</h1>
+      {output}
+      <Stats feedback={feedback} />
+    </>
+  )
+}
+
 
 function App() {
   const [badFeedbackCount, setBadFeedbackCount] = useState(0)
   const [neutralFeedbackCount, setNeutralFeedbackCount] = useState(0)
   const [goodFeedbackCount, setGoodFeedbackCount] = useState(0)
-
-
 
   const bad = {
     title: "bad",
@@ -82,19 +100,7 @@ function App() {
 
   return (
     <>
-
-      <h1>Give Feedback</h1>
-
-      <Button value={good}></Button>
-      <Button value={neutral}></Button>
-      <Button value={bad}></Button>
-
-      <h1>Statistics</h1>
-      <Display value={good} />
-      <Display value={neutral} />
-      <Display value={bad} />
-      <Stats feedback={all} />
-
+      <Statistics feedback={all}/>
     </>
   )
 }
