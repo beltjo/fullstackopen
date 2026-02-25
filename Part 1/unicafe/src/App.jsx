@@ -17,27 +17,68 @@ const Display = ({value}) => {
 
 }
 
+const Stats = ({feedback}) => {
+  //This isn't quite the functional style, but I'm not sure if it is worth using useState for a total and score value.
+  let total = 0
+  let score = 0
+  let positiveCount = 0
+  for (let feedbackType of feedback) {
+    total = total + feedbackType.count
+    score = score + (feedbackType.score * feedbackType.count)
+
+    if (feedbackType.score === 1) {
+      positiveCount = feedbackType.count
+    }
+  }
+
+  if (total === 0) {
+    return (
+      <>
+        <p>all {total}</p>
+        <p>Add feedback to see more statistics</p>
+      </>
+    )
+  }
+
+  const average = score / total
+  const positivePercent = (positiveCount / total) * 100
+  return (
+    <>
+      <p>all {total}</p>
+      <p>average {average}</p>
+      <p>positive {positivePercent} %</p>
+    </>
+  )
+}
+
 
 function App() {
   const [badFeedbackCount, setBadFeedbackCount] = useState(0)
   const [neutralFeedbackCount, setNeutralFeedbackCount] = useState(0)
   const [goodFeedbackCount, setGoodFeedbackCount] = useState(0)
+
+
+
   const bad = {
     title: "bad",
     count: badFeedbackCount,
-    setter: setBadFeedbackCount
+    setter: setBadFeedbackCount,
+    score: -1
   }
   const neutral = {
     title: "neutral",
     count: neutralFeedbackCount,
-    setter: setNeutralFeedbackCount
+    setter: setNeutralFeedbackCount,
+    score: 0
   }
   const good = {
     title: "good",
     count: goodFeedbackCount,
-    setter: setGoodFeedbackCount
+    setter: setGoodFeedbackCount,
+    score: 1
   }
 
+  const all = [good, neutral, bad]
 
   return (
     <>
@@ -52,6 +93,8 @@ function App() {
       <Display value={good} />
       <Display value={neutral} />
       <Display value={bad} />
+      <Stats feedback={all} />
+
     </>
   )
 }
