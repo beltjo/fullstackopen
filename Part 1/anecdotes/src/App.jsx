@@ -1,5 +1,51 @@
 import { useState } from 'react'
 
+
+const Button = ({onClick, text}) => {
+  return (
+    <button onClick={onClick}>{text}</button>
+  )
+}
+
+//Trying out without an object containing each part, doesn't seem great as this is a lot of variables to track, 
+// but with an object we have to know how the object is structured.
+const DailyAnecdote = ({votes, anecdotes, selected, voteSelected, selectRandom}) => {
+  return (      
+    <>
+      <h1>Anecdote of the day</h1>
+      <div>
+        {anecdotes[selected]}
+      </div>
+      <div>
+        has {votes[selected]} votes
+      </div>
+      <Button onClick={voteSelected} text="vote"></Button>
+      <Button onClick={selectRandom} text="next anecdote"></Button>
+    </>
+  )
+}
+
+const MostVotes = ({anecdotes, votes}) => {
+
+  let max = 0
+  let index = 0
+  for (let i = 0; i < votes.length; i++) {
+    if (votes[i] > max) {
+      max = votes[i]
+      index = i
+    }
+  }
+
+  return (
+    <>
+      <h1>Anecdote with most votes</h1>
+      <div>{anecdotes[index]}</div>
+      <div>has {votes[index]} votes</div>
+    </>      
+  )
+}
+
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -23,17 +69,13 @@ const App = () => {
     setVotes(voteCopy)
   }
 
+
+  
+
   return (
-    <>
-      <div>
-        {anecdotes[selected]}
-      </div>
-      <div>
-        has {votes[selected]} votes
-      </div>
-      <button onClick={voteSelected}>vote</button>
-      <button onClick={selectRandom}>next anecdote</button>
-      
+    <>      
+      <DailyAnecdote votes={votes} anecdotes={anecdotes} selected={selected} voteSelected={voteSelected} selectRandom={selectRandom}/>
+      <MostVotes anecdotes={anecdotes} votes={votes}/>
     </>
 
   )
