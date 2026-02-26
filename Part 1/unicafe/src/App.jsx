@@ -12,7 +12,10 @@ const Button = ({value}) => {
 
 const StatisticLine = ({title, value}) => {
   return (
-    <p> {title} {value} </p>
+    <tr>
+      <td>{title}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
@@ -41,29 +44,22 @@ const Stats = ({feedback}) => {
   const average = score / total
   const positivePercent = (positiveCount / total) * 100
 
-  let feedbackCounts = []
-
-  for (let feedbackType of feedback) {
-    feedbackCounts.push(<StatisticLine title={feedbackType.title} value={feedbackType.count}></StatisticLine>)
-  }
-
+  let feedbackCounts = feedback.map((feedbackType) => <StatisticLine key={feedbackType.title} title={feedbackType.title} value={feedbackType.count}></StatisticLine>)
 
   return (
-    <>
-      {feedbackCounts}
-      <StatisticLine title="all" value={total}/>
-      <StatisticLine title="average" value={average}/>
-      <StatisticLine title="positive" value={positivePercent.toString() + " %"}/>
-    </>
+    <table>
+      <tbody>
+        {feedbackCounts}
+        <StatisticLine title="all" value={total}/>
+        <StatisticLine title="average" value={average}/>
+        <StatisticLine title="positive" value={positivePercent.toString() + " %"}/>
+      </tbody>
+    </table>
   )
 }
 
 const Statistics = ({feedback}) => {
-  let buttons = []
-
-  for (let feedbackType of feedback) {
-    buttons.push(<Button value={feedbackType}></Button>)
-  }
+  let buttons = feedback.map(feedbackType => <Button key={feedbackType.title} value={feedbackType}></Button>)
 
   return (
     <>
