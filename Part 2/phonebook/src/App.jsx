@@ -1,5 +1,44 @@
 import { useState } from 'react'
 
+const Filter = ({filter, filterChange}) => {
+  return (
+      <div>
+        filter shown with <input value={filter} onChange={filterChange}></input>
+      </div>
+  )
+} 
+
+const NewPersonSubmittion = ({newName, newNameChange, newPhoneNumber, newPhoneNumberChange, onNewPersonFormSubmit}) => {
+  return (
+    <>
+      <h2>add a new person</h2>
+      
+      <form onSubmit={onNewPersonFormSubmit}>
+        <div>
+          name: <input value={newName} onChange={newNameChange}/>
+        </div>
+        <div>
+          phone number: <input value={newPhoneNumber} onChange={newPhoneNumberChange} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+    </>
+  )
+}
+
+const Phonebook = ({phonebook}) => {
+  return (      
+        <table>
+          <tbody>
+            {phonebook.map((person) => <tr key={person.name}><td>{person.name}</td><td>{person.phoneNumber}</td></tr>) }
+          </tbody>
+        </table>
+      )
+}
+
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', phoneNumber: '040-123456', id: 1 },
@@ -52,29 +91,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
-      <div>
-        filter shown with <input value={filter} onChange={filterChange}></input>
-      </div>
-
-      <h2>add a new person</h2>
-      <form onSubmit={onNewPersonFormSubmit}>
-        <div>
-          name: <input value={newName} onChange={newNameChange}/>
-        </div>
-        <div>
-          phone number: <input value={newPhoneNumber} onChange={newPhoneNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter filter={filter} filterChange={filterChange} />
+      <NewPersonSubmittion newName={newName} newNameChange={newNameChange} newPhoneNumber={newPhoneNumber} newPhoneNumberChange={newPhoneNumberChange} onNewPersonFormSubmit={onNewPersonFormSubmit}/>
       <h2>Numbers</h2>
-      <table>
-        <tbody>
-          {phonebook.map((person) => <tr key={person.name}><td>{person.name}</td><td>{person.phoneNumber}</td></tr>) }
-        </tbody>
-      </table>
+      <Phonebook phonebook={phonebook} />
     </div>
   )
 }
