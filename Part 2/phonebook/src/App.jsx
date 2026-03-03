@@ -14,8 +14,14 @@ const App = () => {
   const onNewPersonFormSubmit = (event) => {
     event.preventDefault()
     console.log("Adding person's name ", newName)
-    setPersons(persons.concat({ name: newName }))
-    setNewName("")
+
+    if ( persons.findIndex((person) => person.name === newName )  > -1) {
+      window.alert(`${newName} is already added to the phonebook.`)
+    }
+    else {
+      setPersons(persons.concat({ name: newName }))
+      setNewName("")
+    }
   }
 
   return (
