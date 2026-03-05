@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import phoneService from './services/phoneService'
 
 const Filter = ({filter, filterChange}) => {
@@ -30,11 +29,11 @@ const NewPersonSubmittion = ({newName, newNameChange, newPhoneNumber, newPhoneNu
   )
 }
 
-const Phonebook = ({phonebook}) => {
+const Phonebook = ({phonebook, onDelete}) => {
   return (      
         <table>
           <tbody>
-            {phonebook.map((person) => <tr key={person.name}><td>{person.name}</td><td>{person.number}</td></tr>) }
+            {phonebook.map((person) => <tr key={person.id}><td>{person.name}</td><td>{person.number}</td><td><button onClick={() => {onDelete(person.id)}}>Delete</button></td></tr>) }
           </tbody>
         </table>
       )
@@ -92,6 +91,32 @@ const App = () => {
 
     }    
   }
+
+  const deleteEntry = (id) => {
+    console.log(id)
+    const person = persons.find((person) => person.id === id)
+    console.log("Found person", person)
+    if (person === undefined) {
+      console.log("Error, did not find matching id.")
+      return
+    }
+    
+    if (window.confirm(`Delete ${person.name}?`)) {
+      console.log("Delete Confirmed")
+
+      phoneService.deleteNumber(person.id)
+        .then(data => {
+          console.log(data)
+          setPersons(persons.filter((person) => person.id !== data.id))
+        })
+      
+    }
+    else {
+      console.log("Delete rejected.")
+    }
+  }
+
+
   let phonebook
   if (filter.length > 0) {
     phonebook = persons.filter((person) => {
@@ -108,7 +133,7 @@ const App = () => {
       <Filter filter={filter} filterChange={filterChange} />
       <NewPersonSubmittion newName={newName} newNameChange={newNameChange} newPhoneNumber={newPhoneNumber} newPhoneNumberChange={newPhoneNumberChange} onNewPersonFormSubmit={onNewPersonFormSubmit}/>
       <h2>Numbers</h2>
-      <Phonebook phonebook={phonebook} />
+      <Phonebook phonebook={phonebook} onDelete={deleteEntry}/>
     </div>
   )
 }

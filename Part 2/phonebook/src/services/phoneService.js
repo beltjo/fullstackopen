@@ -18,4 +18,12 @@ const postNumber = (newPhoneNumber) => {
         })
 }
 
-export default {postNumber, getNumbers}
+const deleteNumber = (id) => {
+    return axios
+        .delete(`${baseURL}/${id}`)
+        .then(response => {
+            return response.data
+        })
+}
+
+export default {postNumber, getNumbers, deleteNumber}

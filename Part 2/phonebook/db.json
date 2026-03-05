@@ -24,16 +24,6 @@
       "id": "6",
       "name": "Simple",
       "number": "123-465"
-    },
-    {
-      "id": "7",
-      "name": "Julia",
-      "number": "123-789"
-    },
-    {
-      "id": 8,
-      "name": "Amd",
-      "number": "1147-852"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
