@@ -21,9 +21,9 @@
       "id": "4"
     },
     {
-      "id": "6",
-      "name": "Simple",
-      "number": "123-465"
+      "name": "amd",
+      "number": "12379",
+      "id": "5"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

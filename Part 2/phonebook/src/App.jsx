@@ -74,13 +74,23 @@ const App = () => {
   const onNewPersonFormSubmit = (event) => {
     event.preventDefault()
     console.log("Adding person's name ", newName)
+    //TODO: Would want the server to determine id or a different way to generate unique ids as this can create duplicate keys when deleting then adding entries.
+    let newNumber = { name: newName, number: newPhoneNumber, id:persons.length + 1}
 
-
-    if ( persons.findIndex((person) => person.name === newName )  > -1) {
-      window.alert(`${newName} is already added to the phonebook.`)
+    const person = persons.find((person) => person.name === newName ) 
+    if (person) {
+      if (window.confirm(`${newName} is already in the the phonebook, would you like to update their number?`)) {
+        console.log("Confirmed replacement.")
+        phoneService
+          .putNumber(person.id, newNumber)
+          .then((data) => {
+            setPersons(persons.map((person) => person.id === data.id ? data : person))
+            setNewName("")
+            setNewPhoneNumber("")
+          })
+      }
     }
     else {
-      let newNumber = { name: newName, number: newPhoneNumber, id:persons.length + 1}
 
       phoneService.postNumber(newNumber).then(data => {
           console.log(data)
