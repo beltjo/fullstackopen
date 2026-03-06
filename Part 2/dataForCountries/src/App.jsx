@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react'
 import countryService from './services/countryService'
 
-const Countries = ({countryData}) => {
-  if (countryData.length >= 10) {
-    return (<div>
-      Too many matches, specify another filler.
-    </div>)
-  }
-
-  if( countryData.length === 1) {
-    const country = countryData[0]
-    return (<div>
+const Country = ({country}) =>{
+  return (<div>
       <h1>{country.name.common}</h1>
       {country.capital.map((capital) => {
         return <p key={capital} >Capital {capital}</p>
@@ -23,7 +15,21 @@ const Countries = ({countryData}) => {
         })}
       </ul>
       <img src={country.flag.png} alt={country.flag.alt}></img>
+    </div>
+  )
+}
+
+
+const Countries = ({countryData, isVisible, setIsVisible}) => {
+  if (countryData.length >= 10) {
+    return (<div>
+      Too many matches, specify another filler.
     </div>)
+  }
+
+  if( countryData.length === 1) {
+    const country = countryData[0]
+    return <Country country={country}/>
   }
 
   if( countryData.length === 0) {
@@ -32,11 +38,16 @@ const Countries = ({countryData}) => {
     </div>)
   }
 
+  const onShowClick = (index) => {
+    setIsVisible(isVisible.map((element, i) => i === index ? true : element) )
+  }
+
   return (<div>
-    {countryData.map((country) => {
-      return (<p key={country.name.common}>
-        {country.name.common}
-      </p>)
+    {countryData.map((country, index) => {
+      return (<div key={country.name.common}>
+        {country.name.common} <button onClick={() => onShowClick(index)}>Show</button>
+        { isVisible[index] ? <Country  country={country}/> : null}
+      </div>)
     })}
   </div>)
 
@@ -46,6 +57,8 @@ const Countries = ({countryData}) => {
 function App() {
   const [countryData, setCountryData] = useState([])
   const [filter, setFilter] = useState("")
+  const [isVisible, setIsVisible] = useState(Array(10).fill(false))
+
   console.log("AllCountryData:", countryData)
 
   useEffect(() => {
@@ -69,6 +82,7 @@ function App() {
     console.log("Event: ", event)
     console.log(event.target.value)
     setFilter(event.target.value)
+    setIsVisible((Array(10).fill(false)))
   }
 
   const filteredCountries = countryData.filter((country) => country.name.common.toLowerCase().includes(filter.toLowerCase()))
@@ -80,7 +94,7 @@ function App() {
     <>
       <div>
         <div>Find Countries: <input onChange={onChange} value={filter}></input></div>
-        <Countries countryData={countries} />
+        <Countries countryData={countries} isVisible={isVisible} setIsVisible={setIsVisible}/>
       </div>
     </>
   )
