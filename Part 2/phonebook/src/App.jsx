@@ -10,8 +10,8 @@ const Notification = ({message, setAlertMessage}) => {
     setAlertMessage(null)
   }, 5000)
 
-  return ( <div className="alert">
-    <h3>{message}</h3>
+  return ( <div className={message.type}>
+    <h3>{message.message}</h3>
   </div>)
 }
 
@@ -92,17 +92,22 @@ const App = () => {
     //TODO: Would want the server to determine id or a different way to generate unique ids as this can create duplicate keys when deleting then adding entries.
     let newNumber = { name: newName, number: newPhoneNumber, id:persons.length + 1}
 
-    const person = persons.find((person) => person.name === newName ) 
-    if (person) {
+    const newPerson = persons.find((person) => person.name === newName ) 
+    if (newPerson) {
       if (window.confirm(`${newName} is already in the the phonebook, would you like to update their number?`)) {
         console.log("Confirmed replacement.")
         phoneService
-          .putNumber(person.id, newNumber)
+          .putNumber(newPerson.id, newNumber)
           .then((data) => {
             setPersons(persons.map((person) => person.id === data.id ? data : person))
             setNewName("")
             setNewPhoneNumber("")
-            setAlertMessage(`Updated ${data.name}`)
+            setAlertMessage({message:`Updated ${data.name}`, type:"alert"})
+          })
+          .catch((error) => {
+            console.error("Ran into error while modifying user", error)  
+            setAlertMessage({message:`${newPerson.name}'s information has already been removed.`, type:"error"})
+            setPersons(persons.filter((person) => person.id !== newPerson.id))
           })
       }
     }
@@ -113,7 +118,7 @@ const App = () => {
           setPersons(persons.concat(data))
           setNewName("")
           setNewPhoneNumber("")
-          setAlertMessage(`Added ${data.name}`)
+          setAlertMessage({message:`Added ${data.name}`, type:"alert"})
         })
 
     }    
