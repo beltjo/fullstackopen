@@ -1,6 +1,20 @@
 import { useState, useEffect } from 'react'
 import phoneService from './services/phoneService'
 
+const Notification = ({message, setAlertMessage}) => {
+  if(message === null) {
+    return null
+  }
+
+  setTimeout(() => {
+    setAlertMessage(null)
+  }, 5000)
+
+  return ( <div className="alert">
+    <h3>{message}</h3>
+  </div>)
+}
+
 const Filter = ({filter, filterChange}) => {
   return (
       <div>
@@ -45,6 +59,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [alertMessage, setAlertMessage] = useState(null)
   
   useEffect(() => {
     console.log("Starting effect")
@@ -87,6 +102,7 @@ const App = () => {
             setPersons(persons.map((person) => person.id === data.id ? data : person))
             setNewName("")
             setNewPhoneNumber("")
+            setAlertMessage(`Updated ${data.name}`)
           })
       }
     }
@@ -97,6 +113,7 @@ const App = () => {
           setPersons(persons.concat(data))
           setNewName("")
           setNewPhoneNumber("")
+          setAlertMessage(`Added ${data.name}`)
         })
 
     }    
@@ -140,6 +157,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={alertMessage} setAlertMessage={setAlertMessage} />
       <Filter filter={filter} filterChange={filterChange} />
       <NewPersonSubmittion newName={newName} newNameChange={newNameChange} newPhoneNumber={newPhoneNumber} newPhoneNumberChange={newPhoneNumberChange} onNewPersonFormSubmit={onNewPersonFormSubmit}/>
       <h2>Numbers</h2>

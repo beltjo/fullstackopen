@@ -24,6 +24,36 @@
       "name": "amd",
       "number": "12379",
       "id": "5"
+    },
+    {
+      "id": "6",
+      "name": "asd",
+      "number": "123/465"
+    },
+    {
+      "name": "nim",
+      "number": "1456123",
+      "id": "7"
+    },
+    {
+      "id": "8",
+      "name": "nimer",
+      "number": "1234"
+    },
+    {
+      "name": "noob",
+      "number": "1564",
+      "id": "9"
+    },
+    {
+      "id": "10",
+      "name": "noobly",
+      "number": "14563"
+    },
+    {
+      "id": 11,
+      "name": "bert ",
+      "number": "14563"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
