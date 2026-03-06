@@ -90,7 +90,8 @@ const App = () => {
     event.preventDefault()
     console.log("Adding person's name ", newName)
     //TODO: Would want the server to determine id or a different way to generate unique ids as this can create duplicate keys when deleting then adding entries.
-    let newNumber = { name: newName, number: newPhoneNumber, id:persons.length + 1}
+    // As a note, needed to convert to string as json-server would give a string id on startup but delete would return a number. This would cause a mismatch and have a local 'ghost' copy while correctly deleting the server's version.
+    let newNumber = { name: newName, number: newPhoneNumber, id:(persons.length + 1).toString()}
 
     const newPerson = persons.find((person) => person.name === newName ) 
     if (newPerson) {
@@ -114,7 +115,7 @@ const App = () => {
     else {
 
       phoneService.postNumber(newNumber).then(data => {
-          console.log(data)
+          console.log("Return from post", data)
           setPersons(persons.concat(data))
           setNewName("")
           setNewPhoneNumber("")
