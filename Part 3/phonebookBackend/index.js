@@ -24,6 +24,7 @@ let people = [
 ]
 
 const app = express()
+app.use(express.json())
 
 app.get("/", (request, response) => {
     response.end('<h1>Hello, click on a link to test a connection</h1><ul><li><a href="../api/persons">See all people</a></li><li><a href="../info">See info</a></li><ul>')
@@ -56,6 +57,30 @@ app.delete("/api/persons/:id", (request, response) => {
 
 })
 
+
+app.post("/api/persons", (request, response) => {
+
+    //console.log("Request:", request)
+    console.log("Headers:", request.header)
+    const body = request.body 
+    console.log("Body:", body)
+    const name = body.person
+    const number = body.number
+    const id = Math.floor(Math.random() * 10000)
+    if (name && number) {
+        const person = {
+            "name": name,
+            "number": number,
+            "id": id
+        }
+        people = [...people, person]
+        return response.status(200).json(person)
+    } else {
+        return response.status(400).send("Missing parameters for person.")
+    }
+
+
+})
 
 
 app.get("/info", (request, response) => {
