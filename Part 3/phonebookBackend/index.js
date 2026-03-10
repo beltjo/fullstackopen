@@ -53,30 +53,35 @@ app.delete("/api/persons/:id", (request, response) => {
     
     people = people.filter((person) => person.id !== id)
 
-    return response.status(204)
+    return response.status(204).end()
 
 })
 
 
 app.post("/api/persons", (request, response) => {
 
-    //console.log("Request:", request)
-    console.log("Headers:", request.header)
     const body = request.body 
     console.log("Body:", body)
     const name = body.person
     const number = body.number
     const id = Math.floor(Math.random() * 10000)
     if (name && number) {
+        //Assuming exact match rather than allowing different cases.
+        const duplicateName = people.find((person) => person.name === name)
+
+        if (duplicateName) {
+            return response.status(400).send(`${name} already has a record.`)
+        }
+
         const person = {
+            "id": id,
             "name": name,
-            "number": number,
-            "id": id
+            "number": number            
         }
         people = [...people, person]
         return response.status(200).json(person)
     } else {
-        return response.status(400).send("Missing parameters for person.")
+        return response.status(400).send("Missing name and/or number for person.")
     }
 
 
