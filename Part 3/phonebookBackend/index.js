@@ -34,6 +34,20 @@ app.get("/api/persons", (request, response) => {
     response.json(people)
 })
 
+app.get("/api/persons/:id", (request, response) => {
+    const id = request.params.id
+    
+    const person = people.find((person) => person.id === id)
+
+    if(person) {
+        return response.json(person)
+    } else {
+        return response.status(404).send("No person found with the matching id")
+    }
+
+})
+
+
 app.get("/info", (request, response) => {
     const timestamp = new Date(Date.now())
     const phoneInfo = `<p>Phonebook has info for ${people.length} people</p>`
@@ -41,6 +55,7 @@ app.get("/info", (request, response) => {
 
     response.end(`${phoneInfo}${timestampString}`)
 })
+
 
 const PORT = 3001
 app.listen(PORT, () => {
