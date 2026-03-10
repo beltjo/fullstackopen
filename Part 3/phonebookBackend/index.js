@@ -26,12 +26,20 @@ let people = [
 const app = express()
 
 app.get("/", (request, response) => {
-    response.end('<h1>Hello, click on a link to test a connection</h1><a href="../api/persons">See all people</a>')
+    response.end('<h1>Hello, click on a link to test a connection</h1><ul><li><a href="../api/persons">See all people</a></li><li><a href="../info">See info</a></li><ul>')
 })
 
 
 app.get("/api/persons", (request, response) => {
     response.json(people)
+})
+
+app.get("/info", (request, response) => {
+    const timestamp = new Date(Date.now())
+    const phoneInfo = `<p>Phonebook has info for ${people.length} people</p>`
+    const timestampString = `<p>${timestamp}</p>`
+
+    response.end(`${phoneInfo}${timestampString}`)
 })
 
 const PORT = 3001
