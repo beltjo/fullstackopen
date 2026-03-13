@@ -67,7 +67,7 @@ const App = () => {
     phoneService
       .getNumbers()
       .then((data) => {
-        console.log(data)
+        console.log("number data: ", data)
         setPersons(data)
       })
   }, [])
