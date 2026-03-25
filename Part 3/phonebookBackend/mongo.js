@@ -9,10 +9,6 @@
     node mongo.js yourpassword
 
     This will print all people in the phonebook.
-
-
-
-
 */
 
 const connect = (url) => {

@@ -1,28 +1,8 @@
 const express = require("express")
 const morgan = require("morgan")
+const database = require("./src/databaseConnector")
 
-let people = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+let myDatabase = new database()
 
 const app = express()
 
@@ -52,19 +32,26 @@ app.get("/", (request, response) => {
 
 
 app.get("/api/persons", (request, response) => {
-    response.json(people)
+    myDatabase.getPeople().then(people => {
+        console.log("Completed request for /api/persons, returning", people)
+        return response.json(people)
+    })
 })
 
 app.get("/api/persons/:id", (request, response) => {
     const id = request.params.id
     
-    const person = people.find((person) => person.id === id)
+    myDatabase.getPeople().then(people => {
+        const person = people.find((person) => person.id === id)
 
-    if(person) {
-        return response.json(person)
-    } else {
-        return response.status(404).send("No person found with the matching id")
-    }
+        if(person) {
+            return response.json(person)
+        } else {
+            return response.status(404).send("No person found with the matching id")
+        }
+    })
+
+
 
 })
 
@@ -72,6 +59,8 @@ app.delete("/api/persons/:id", (request, response) => {
     const id = request.params.id
     
     people = people.filter((person) => person.id !== id)
+
+    database.deletePerson(id)
 
     return response.status(204).end()
 
@@ -99,6 +88,8 @@ app.post("/api/persons", (request, response) => {
             "number": number            
         }
         people = [...people, person]
+        database.addPerson(person)
+
         return response.status(200).json(person)
     } else {
         return response.status(400).send("Missing name and/or number for person.")
