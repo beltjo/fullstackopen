@@ -8,43 +8,65 @@ module.exports = class mongooseDB {
             name: String,
             number: String
         })
+        
+        try {
+            console.log("No model exists, creating")
+            this.Person = mongoose.model('Person', PersonSchema)        
+        } catch(error) {
+            console.log("Model already exists, loading.")
+            this.Person = mongoose.model('Person')
+        }
 
-        this.Person = mongoose.model('Person', PersonSchema)
 
         console.log("Created Person: ", this.Person, " for mongoose.")
     }
 
-    connect = () => {
+    connect = async () => {
         mongoose.set('strictQuery', false)
-        mongoose.connect(process.env.MONGODB_URI, {family: 4})
+        await mongoose.connect(process.env.MONGODB_URI, {family: 4})
         console.log("Connected to ", process.env.MONGODB_URI)
+
+        try {
+            console.log("No model exists, creating")
+            this.Person = mongoose.model('Person', PersonSchema)
+            console.log("Created new model.")
+        } catch(error) {
+            console.log("Model already exists, loading.")
+            this.Person = mongoose.model('Person')
+        }
     }
 
-    getAll = () => {
-        let People = []
-        this.connect()
+    getAll = async () => {
+        await this.connect()
         console.log("Requesting all elements.")
         return this.Person.find({}).then(result => {
             console.log("Result: ", result)
             result.forEach(person => {
                 console.log("ForEach:", person)
             })
-
-            People = result.map(person => {
-                console.log("Map", person)
-                return person
-            })
+            
             mongoose.connection.close()
             return result
         })
     }
 
-    deleteElement = ({id}) => {
+    deleteElement = async (id) => {
         
     }
 
 
-    addPerson = ({person}) => {
+    addPerson = async (person) => {
+        await this.connect()
 
+        const newPerson = this.Person({
+            name: person['name'],
+            number: person['number']
+        })
+        console.log("Created ", newPerson, " Attempting to save...")
+        return newPerson.save().then(result => {
+            console.log("Person saved", result)
+            mongoose.connection.close()
+            return result
+        })
     }
 }

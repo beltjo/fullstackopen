@@ -71,26 +71,29 @@ app.post("/api/persons", (request, response) => {
 
     const body = request.body 
     console.log("Body:", body)
-    const name = body.person
+    const name = body.name
     const number = body.number
-    const id = Math.floor(Math.random() * 10000)
     if (name && number) {
         //Assuming exact match rather than allowing different cases.
-        const duplicateName = people.find((person) => person.name === name)
+            myDatabase.getPeople().then(async people => {
+            console.log("Found ", people, " checking for duplicates")
+            const duplicateName = people.find((person) => person.name === name)
 
-        if (duplicateName) {
-            return response.status(400).send(`${name} already has a record.`)
-        }
+            if (duplicateName) {
+                return response.status(400).send(`${name} already has a record.`)
+            }
 
-        const person = {
-            "id": id,
-            "name": name,
-            "number": number            
-        }
-        people = [...people, person]
-        database.addPerson(person)
+            const person = {
+                "name": name,
+                "number": number            
+            }
+            console.log("Adding ", person)
+            const newPerson = await myDatabase.addPerson(person)
+            console.log("fed", newPerson)
 
-        return response.status(200).json(person)
+            return response.status(200).json(newPerson)
+        })
+
     } else {
         return response.status(400).send("Missing name and/or number for person.")
     }

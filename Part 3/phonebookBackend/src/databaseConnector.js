@@ -6,16 +6,17 @@ module.exports = class database {
         this.connection = new mongooseDB()
     }
 
-    getPeople = () => {
-        return this.connection.getAll().then(result => result)
+    getPeople = async () => {
+        return await this.connection.getAll().then(result => result)
     }
 
-    deletePerson = ({id}) => {
-        return mongoDBConnection.deleteElement(id)
+    deletePerson = async (id) => {
+        return await this.connection.deleteElement(id)
     }
 
-    addPerson = ({person}) => {
-        return mongoDBConnection.addPerson(person)
+    addPerson = async (person) => {
+        console.log("Calling addPerson", person)
+        return await this.connection.addPerson(person).then(result => result)
     }
 
 }
