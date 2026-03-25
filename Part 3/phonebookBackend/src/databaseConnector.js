@@ -6,6 +6,13 @@ module.exports = class database {
         this.connection = new mongooseDB()
     }
 
+    updatePerson = async (person) => {
+        return await this.connection.update(person).then(result => {
+            return {...result._doc, "id": result._id}
+        })
+    }
+
+
     getPeople = async () => {
         return await this.connection.getAll().then(result => {
             
@@ -22,6 +29,12 @@ module.exports = class database {
     deletePerson = async (id) => {
         return await this.connection.deleteElement(id).then(result => {
             console.log("Casting ", result)
+            return {...result._doc, "id": result._id}
+        })
+    }
+
+    getPerson = async (id) => {
+        return await this.connection.getPerson(id).then(result => {
             return {...result._doc, "id": result._id}
         })
     }

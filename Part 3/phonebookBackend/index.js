@@ -6,6 +6,16 @@ let myDatabase = new database()
 
 const app = express()
 
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id'})
+    }
+    next(error)
+}
+
+
 morgan.token('body', function (req, res) { 
     if (req.method === "POST") {
         return JSON.stringify(req.body)
@@ -36,8 +46,8 @@ app.get("/api/persons", (request, response) => {
 app.get("/api/persons/:id", (request, response) => {
     const id = request.params.id
     
-    myDatabase.getPeople().then(people => {
-        const person = people.find((person) => person.id === id)
+    myDatabase.getPerson(id).then(person => {
+        console.log("Found: ", person)
 
         if(person) {
             return response.json(person)
@@ -45,10 +55,9 @@ app.get("/api/persons/:id", (request, response) => {
             return response.status(404).send("No person found with the matching id")
         }
     })
-
-
-
 })
+
+
 
 app.delete("/api/persons/:id", (request, response) => {
     const id = request.params.id
@@ -57,6 +66,22 @@ app.delete("/api/persons/:id", (request, response) => {
         return response.json(result)
     }) 
 
+})
+
+app.put("/api/persons/:id", (request, response) => {
+    const id = request.params.id
+    const body = request.body 
+    console.log("Body:", body)
+    const newPerson = {...body, "id": id}
+
+    myDatabase.updatePerson(newPerson).then(person => {
+
+        if(person) {
+            return response.json(person)            
+        } else {
+            return response.status(404).send("No person found with the matching id")
+        }
+    })
 })
 
 
@@ -82,7 +107,7 @@ app.post("/api/persons", (request, response) => {
             }
             console.log("Adding ", person)
             const newPerson = await myDatabase.addPerson(person)
-            console.log("fed", newPerson)
+            console.log("Added", newPerson)
 
             return response.status(200).json(newPerson)
         })
@@ -107,6 +132,8 @@ app.get("/info", (request, response) => {
     })
 
 })
+
+app.use(errorHandler)
 
 
 const PORT = 3001

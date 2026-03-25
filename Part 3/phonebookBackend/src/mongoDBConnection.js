@@ -65,4 +65,23 @@ module.exports = class mongooseDB {
             return result
         })
     }
+
+    getPerson = async (id) => {
+        await this.connect()
+        return await this.Person.findById(id)
+    }
+
+    update = async (newPerson) => {
+        await this.connect()
+        console.log("Updating person with: ", newPerson)
+        const person = await this.Person.findById(newPerson['id'])
+
+        person.number = newPerson['number']
+        return person.save().then(result => {
+            console.log("Person updated", result)
+            mongoose.connection.close()
+            return result
+        })
+
+    }
 }
