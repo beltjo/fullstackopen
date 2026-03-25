@@ -7,11 +7,23 @@ module.exports = class database {
     }
 
     getPeople = async () => {
-        return await this.connection.getAll().then(result => result)
+        return await this.connection.getAll().then(result => {
+            
+            return result.map(element => {
+                return {
+                    ...element._doc,
+                    "id": element._id
+                }
+            })
+        
+        })
     }
 
     deletePerson = async (id) => {
-        return await this.connection.deleteElement(id)
+        return await this.connection.deleteElement(id).then(result => {
+            console.log("Casting ", result)
+            return {...result._doc, "id": result._id}
+        })
     }
 
     addPerson = async (person) => {

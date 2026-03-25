@@ -26,14 +26,6 @@ module.exports = class mongooseDB {
         await mongoose.connect(process.env.MONGODB_URI, {family: 4})
         console.log("Connected to ", process.env.MONGODB_URI)
 
-        try {
-            console.log("No model exists, creating")
-            this.Person = mongoose.model('Person', PersonSchema)
-            console.log("Created new model.")
-        } catch(error) {
-            console.log("Model already exists, loading.")
-            this.Person = mongoose.model('Person')
-        }
     }
 
     getAll = async () => {
@@ -51,7 +43,11 @@ module.exports = class mongooseDB {
     }
 
     deleteElement = async (id) => {
-        
+        await this.connect()
+
+        const element = await this.Person.findByIdAndDelete(id)
+        console.log("Deleted :", element)
+        return element
     }
 
 

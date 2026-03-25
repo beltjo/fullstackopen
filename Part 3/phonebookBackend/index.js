@@ -26,11 +26,6 @@ app.use(morgan(function (tokens, req, res) {
   ].join(' ')
 }))
 
-app.get("/", (request, response) => {
-    response.end('<h1>Hello, click on a link to test a connection</h1><ul><li><a href="../api/persons">See all people</a></li><li><a href="../info">See info</a></li><ul>')
-})
-
-
 app.get("/api/persons", (request, response) => {
     myDatabase.getPeople().then(people => {
         console.log("Completed request for /api/persons, returning", people)
@@ -58,11 +53,9 @@ app.get("/api/persons/:id", (request, response) => {
 app.delete("/api/persons/:id", (request, response) => {
     const id = request.params.id
     
-    people = people.filter((person) => person.id !== id)
-
-    database.deletePerson(id)
-
-    return response.status(204).end()
+    myDatabase.deletePerson(id).then(result => {
+        return response.json(result)
+    }) 
 
 })
 
@@ -104,10 +97,15 @@ app.post("/api/persons", (request, response) => {
 
 app.get("/info", (request, response) => {
     const timestamp = new Date(Date.now())
-    const phoneInfo = `<p>Phonebook has info for ${people.length} people</p>`
-    const timestampString = `<p>${timestamp}</p>`
 
-    response.end(`${phoneInfo}${timestampString}`)
+    myDatabase.getPeople().then( people => { 
+        const phoneInfo = `<p>Phonebook has info for ${people.length} people</p>`
+        const timestampString = `<p>${timestamp}</p>`
+
+        return response.end(`${phoneInfo}${timestampString}`)
+
+    })
+
 })
 
 
