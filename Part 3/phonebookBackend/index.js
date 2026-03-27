@@ -11,6 +11,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id'})
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({error: error.message})
     }
     next(error)
 }
@@ -68,13 +70,13 @@ app.delete("/api/persons/:id", (request, response) => {
 
 })
 
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
     const id = request.params.id
     const body = request.body 
     console.log("Body:", body)
     const newPerson = {...body, "id": id}
 
-    myDatabase.updatePerson(newPerson).then(person => {
+    myDatabase.updatePerson(newPerson, next).then(person => {
 
         if(person) {
             return response.json(person)            
@@ -85,7 +87,7 @@ app.put("/api/persons/:id", (request, response) => {
 })
 
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
 
     const body = request.body 
     console.log("Body:", body)
@@ -106,7 +108,7 @@ app.post("/api/persons", (request, response) => {
                 "number": number            
             }
             console.log("Adding ", person)
-            const newPerson = await myDatabase.addPerson(person)
+            const newPerson = await myDatabase.addPerson(person, next)
             console.log("Added", newPerson)
 
             return response.status(200).json(newPerson)

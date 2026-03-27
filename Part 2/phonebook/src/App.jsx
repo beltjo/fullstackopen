@@ -121,6 +121,10 @@ const App = () => {
           setNewPhoneNumber("")
           setAlertMessage({message:`Added ${data.name}`, type:"alert"})
         })
+        .catch(error => {
+          console.error("Encounterd error: ", error.response.data.error)
+          setAlertMessage({message: error.response.data.error, type:"error"})
+        }) 
 
     }    
   }

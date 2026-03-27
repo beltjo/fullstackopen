@@ -5,7 +5,11 @@ require("dotenv").config()
 module.exports = class mongooseDB {
     constructor() {
         const PersonSchema = new mongoose.Schema({
-            name: String,
+            name: {
+                type: String,
+                minLength: 3,
+                required: true
+            },
             number: String
         })
         
@@ -51,7 +55,7 @@ module.exports = class mongooseDB {
     }
 
 
-    addPerson = async (person) => {
+    addPerson = async (person, next) => {
         await this.connect()
 
         const newPerson = this.Person({
@@ -64,6 +68,7 @@ module.exports = class mongooseDB {
             mongoose.connection.close()
             return result
         })
+        .catch(error => next(error))
     }
 
     getPerson = async (id) => {
@@ -71,7 +76,7 @@ module.exports = class mongooseDB {
         return await this.Person.findById(id)
     }
 
-    update = async (newPerson) => {
+    update = async (newPerson, next) => {
         await this.connect()
         console.log("Updating person with: ", newPerson)
         const person = await this.Person.findById(newPerson['id'])
@@ -82,6 +87,7 @@ module.exports = class mongooseDB {
             mongoose.connection.close()
             return result
         })
+        .catch(error => next(error))
 
     }
 }
