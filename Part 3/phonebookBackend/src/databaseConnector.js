@@ -6,30 +6,21 @@ module.exports = class database {
         this.connection = new mongooseDB()
     }
 
-    updatePerson = async (person, next) => {
-        return await this.connection.update(person, next).then(result => {
-            return {...result._doc, "id": result._id}
+    updatePerson = async (person) => {
+        return await this.connection.update(person).then(result => {
+            return result
         })
     }
 
 
     getPeople = async () => {
-        return await this.connection.getAll().then(result => {
-            
-            return result.map(element => {
-                return {
-                    ...element._doc,
-                    "id": element._id
-                }
-            })
-        
-        })
+        return await this.connection.getAll().then(result => result )
     }
 
     deletePerson = async (id) => {
         return await this.connection.deleteElement(id).then(result => {
             console.log("Casting ", result)
-            return {...result._doc, "id": result._id}
+            return result
         })
     }
 
@@ -39,9 +30,9 @@ module.exports = class database {
         })
     }
 
-    addPerson = async (person, next) => {
+    addPerson = async (person) => {
         console.log("Calling addPerson", person)
-        return await this.connection.addPerson(person, next).then(result => result)
+        return await this.connection.addPerson(person).then(result => result)
     }
 
 }

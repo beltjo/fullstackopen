@@ -106,9 +106,17 @@ const App = () => {
             setAlertMessage({message:`Updated ${data.name}`, type:"alert"})
           })
           .catch((error) => {
-            console.error("Ran into error while modifying user", error)  
-            setAlertMessage({message:`${newPerson.name}'s information has already been removed.`, type:"error"})
-            setPersons(persons.filter((person) => person.id !== newPerson.id))
+            console.error("Ran into error while modifying user", error)
+            console.error("Ran into error while modifying user", error.toJSON())
+            console.error("Got the error of ", error.response.data.error)
+            console.error("Got the type of ", error.response.data.type)
+            if(error.response.data.type === "ValidationError") {
+              setAlertMessage({message:error.response.data.error, type:"error"})
+            } else {
+              setAlertMessage({message:`${newPerson.name}'s information has already been removed.`, type:"error"})
+              setPersons(persons.filter((person) => person.id !== newPerson.id))
+
+            }            
           })
       }
     }

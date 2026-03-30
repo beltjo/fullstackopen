@@ -10,7 +10,18 @@ module.exports = class mongooseDB {
                 minLength: 3,
                 required: true
             },
-            number: String
+            number: {
+                type: String,
+
+                validate: {
+                    validator: function(v) {
+                        console.log("Testing : ", v)
+                        return v.length >= 8 && /\d{2,3}-\d{5,}/.test(v);
+                    },
+                    message: props => `${props.value} is not a valid phone number!`
+                },
+                required: [true, "A number is required!"]
+            }
         })
         
         try {
@@ -42,7 +53,12 @@ module.exports = class mongooseDB {
             })
             
             mongoose.connection.close()
-            return result
+            return result.map(element => {
+                return {
+                    ...element._doc,
+                    "id": element._id
+                }
+            })
         })
     }
 
@@ -51,11 +67,11 @@ module.exports = class mongooseDB {
 
         const element = await this.Person.findByIdAndDelete(id)
         console.log("Deleted :", element)
-        return element
+        return {...element._doc, "id": element._id}
     }
 
 
-    addPerson = async (person, next) => {
+    addPerson = async (person) => {
         await this.connect()
 
         const newPerson = this.Person({
@@ -68,7 +84,6 @@ module.exports = class mongooseDB {
             mongoose.connection.close()
             return result
         })
-        .catch(error => next(error))
     }
 
     getPerson = async (id) => {
@@ -76,7 +91,7 @@ module.exports = class mongooseDB {
         return await this.Person.findById(id)
     }
 
-    update = async (newPerson, next) => {
+    update = async (newPerson) => {
         await this.connect()
         console.log("Updating person with: ", newPerson)
         const person = await this.Person.findById(newPerson['id'])
@@ -85,9 +100,8 @@ module.exports = class mongooseDB {
         return person.save().then(result => {
             console.log("Person updated", result)
             mongoose.connection.close()
-            return result
+            return {...result._doc, "id": result._id}
+            
         })
-        .catch(error => next(error))
-
     }
 }
