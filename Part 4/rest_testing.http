@@ -1,0 +1,10 @@
+### Test Post request, this should work
+POST http://localhost:3003/api/blogs http//1.1
+Content-Type: application/json
+
+ {
+    "title": "10 speedrunning tricks.",
+    "author": "Simple",
+    "url": "fake_url",
+    "likes": 3
+ }
