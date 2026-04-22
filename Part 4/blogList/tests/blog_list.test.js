@@ -1,4 +1,4 @@
-const { test, beforeEach, after } = require('node:test')
+const { test, beforeEach, after, describe } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
 const app = require('../app')
@@ -40,32 +40,63 @@ test('validate get api', async () => {
 })
 
 
-test('validate post api', async () => {
-  //Build the request
-  const payload =   {
-    title: 'Supertest npm package',
-    author: 'Supertest team',
-    url: 'https://www.npmjs.com/package/supertest',
-    likes: 12000,
-  }
-  //Send the request
-  await api
-    .post('/api/blogs')
-    .send(payload)
-    .set('Content-Type', 'application/json')
-    .set('Accept', 'application/json')
+describe('post api', () => {
+  test('validate post api', async () => {
+    //Build the request
+    const payload =   {
+      title: 'Supertest npm package',
+      author: 'Supertest team',
+      url: 'https://www.npmjs.com/package/supertest',
+      likes: 12000,
+    }
+    //Send the request
+    await api
+      .post('/api/blogs')
+      .send(payload)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
 
-  // console.log('Post response:' + JSON.stringify(response.body))
-  const getResponse = await api.get('/api/blogs')
-  // console.log(getResponse.body)
-  //Validate the request
-  assert.strictEqual(getResponse.body.length, 3, 'Did not add another blog!')
-  assert.strictEqual(getResponse.body[2]['title'], payload['title'])
-  assert.strictEqual(getResponse.body[2]['author'], payload['author'])
-  assert.strictEqual(getResponse.body[2]['url'], payload['url'])
-  assert.strictEqual(getResponse.body[2]['likes'], payload['likes'])
+    // console.log('Post response:' + JSON.stringify(response.body))
+    const getResponse = await api.get('/api/blogs')
+    // console.log(getResponse.body)
+    //Validate the request
+    assert.strictEqual(getResponse.body.length, 3, 'Did not add another blog!')
+    assert.strictEqual(getResponse.body[2]['title'], payload['title'])
+    assert.strictEqual(getResponse.body[2]['author'], payload['author'])
+    assert.strictEqual(getResponse.body[2]['url'], payload['url'])
+    assert.strictEqual(getResponse.body[2]['likes'], payload['likes'])
 
+  })
+
+  test('post api with no likes', async () => {
+    //Build the request
+    const payload =   {
+      title: 'Supertest npm package',
+      author: 'Supertest team',
+      url: 'https://www.npmjs.com/package/supertest',
+    }
+    //Send the request
+    await api
+      .post('/api/blogs')
+      .send(payload)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+
+    // console.log('Post response:' + JSON.stringify(response.body))
+    const getResponse = await api.get('/api/blogs')
+    // console.log(getResponse.body)
+    //Validate the request
+    assert.strictEqual(getResponse.body.length, 3, 'Did not add another blog!')
+    assert.strictEqual(getResponse.body[2]['title'], payload['title'])
+    assert.strictEqual(getResponse.body[2]['author'], payload['author'])
+    assert.strictEqual(getResponse.body[2]['url'], payload['url'])
+    assert.strictEqual(getResponse.body[2]['likes'], 0)
+
+  })
 })
+
+
+
 
 after(async () => {
   await mongoose.connection.close()
