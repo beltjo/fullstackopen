@@ -141,6 +141,35 @@ describe('post api', () => {
 
 })
 
+describe('Delete API', async () => {
+  test('Delete non-existing id', async () => {
+
+    //Create the delete request
+    const fake_id = 1
+
+    // //Send the request
+    await api.delete(`/api/blogs/${fake_id}`)
+
+    // //Validate the result
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, 2)
+  })
+
+  test('Delete id', async () => {
+    // Since ids are randomly generated, first get the id from the database.
+    const beforeDelete = await api.get('/api/blogs')
+
+    //Create the delete request
+    const id = beforeDelete.body[0]['id']
+    //Send the request
+    await api.delete(`/api/blogs/${id}`)
+
+    //Validate the result
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, 1)
+    assert.deepStrictEqual(beforeDelete.body[1], response.body[0])
+  })
+})
 
 
 

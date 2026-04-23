@@ -8,3 +8,6 @@ Content-Type: application/json
     "url": "fake_url",
     "likes": 310
  }
+
+### Test Delete request
+DELETE http://localhost:3003/api/blogs/69ea54a222c0294ae7239e24 http//1.1
