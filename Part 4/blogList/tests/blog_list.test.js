@@ -93,6 +93,52 @@ describe('post api', () => {
     assert.strictEqual(getResponse.body[2]['likes'], 0)
 
   })
+
+  test('post api with no url', async () => {
+    //Build the request
+    const payload =   {
+      title: 'Supertest npm package',
+      author: 'Supertest team',
+    }
+    //Send the request
+    await api
+      .post('/api/blogs')
+      .send(payload)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .expect(400)
+
+    // console.log('Post response:' + JSON.stringify(response.body))
+    const getResponse = await api.get('/api/blogs')
+    // console.log(getResponse.body)
+    //Validate the request
+    assert.strictEqual(getResponse.body.length, 2, 'A blog was added!')
+
+
+  })
+
+  test('post api with no title', async () => {
+    //Build the request
+    const payload =   {
+      author: 'Supertest team',
+      url: 'https://www.npmjs.com/package/supertest',
+    }
+    //Send the request
+    await api
+      .post('/api/blogs')
+      .send(payload)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .expect(400)
+
+    // console.log('Post response:' + JSON.stringify(response.body))
+    const getResponse = await api.get('/api/blogs')
+    // console.log(getResponse.body)
+    //Validate the request
+    assert.strictEqual(getResponse.body.length, 2, 'A blog was added!')
+
+  })
+
 })
 
 

@@ -9,6 +9,11 @@ blogRouter.get('', async (request, response) => {
 blogRouter.post('', async (request, response) => {
   const blog = new Blog(request.body)
 
+  if( !blog['title'] || !blog['url']) {
+    response.status(400).json('Missing title or url.')
+    return
+  }
+
   if( !blog['likes']) {
     blog['likes'] = 0
   }
