@@ -20,6 +20,8 @@ const blogs = [
   }
 ]
 
+const base_url = '/api/blogs'
+
 const api = supertest(app)
 
 beforeEach(async () => {
@@ -30,7 +32,7 @@ beforeEach(async () => {
 })
 
 test('validate get api', async () => {
-  const response = await api.get('/api/blogs')
+  const response = await api.get(base_url)
 
   assert.strictEqual(response.body.length, 2, 'Length of blogs does not match expected!')
   const regex = new RegExp(/application\/json/, 'i')
@@ -51,13 +53,13 @@ describe('post api', () => {
     }
     //Send the request
     await api
-      .post('/api/blogs')
+      .post(base_url)
       .send(payload)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
 
     // console.log('Post response:' + JSON.stringify(response.body))
-    const getResponse = await api.get('/api/blogs')
+    const getResponse = await api.get(base_url)
     // console.log(getResponse.body)
     //Validate the request
     assert.strictEqual(getResponse.body.length, 3, 'Did not add another blog!')
@@ -77,13 +79,13 @@ describe('post api', () => {
     }
     //Send the request
     await api
-      .post('/api/blogs')
+      .post(base_url)
       .send(payload)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
 
     // console.log('Post response:' + JSON.stringify(response.body))
-    const getResponse = await api.get('/api/blogs')
+    const getResponse = await api.get(base_url)
     // console.log(getResponse.body)
     //Validate the request
     assert.strictEqual(getResponse.body.length, 3, 'Did not add another blog!')
@@ -102,14 +104,14 @@ describe('post api', () => {
     }
     //Send the request
     await api
-      .post('/api/blogs')
+      .post(base_url)
       .send(payload)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .expect(400)
 
     // console.log('Post response:' + JSON.stringify(response.body))
-    const getResponse = await api.get('/api/blogs')
+    const getResponse = await api.get(base_url)
     // console.log(getResponse.body)
     //Validate the request
     assert.strictEqual(getResponse.body.length, 2, 'A blog was added!')
@@ -125,14 +127,14 @@ describe('post api', () => {
     }
     //Send the request
     await api
-      .post('/api/blogs')
+      .post(base_url)
       .send(payload)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .expect(400)
 
     // console.log('Post response:' + JSON.stringify(response.body))
-    const getResponse = await api.get('/api/blogs')
+    const getResponse = await api.get(base_url)
     // console.log(getResponse.body)
     //Validate the request
     assert.strictEqual(getResponse.body.length, 2, 'A blog was added!')
@@ -151,13 +153,13 @@ describe('Delete API', async () => {
     await api.delete(`/api/blogs/${fake_id}`)
 
     // //Validate the result
-    const response = await api.get('/api/blogs')
+    const response = await api.get(base_url)
     assert.strictEqual(response.body.length, 2)
   })
 
   test('Delete id', async () => {
     // Since ids are randomly generated, first get the id from the database.
-    const beforeDelete = await api.get('/api/blogs')
+    const beforeDelete = await api.get(base_url)
 
     //Create the delete request
     const id = beforeDelete.body[0]['id']
@@ -165,13 +167,136 @@ describe('Delete API', async () => {
     await api.delete(`/api/blogs/${id}`)
 
     //Validate the result
-    const response = await api.get('/api/blogs')
+    const response = await api.get(base_url)
     assert.strictEqual(response.body.length, 1)
     assert.deepStrictEqual(beforeDelete.body[1], response.body[0])
   })
 })
 
+describe('Put api', () => {
 
+  test('Update title', async () => {
+    //Create the request
+    const payload = { 'title' : 'New title' }
+    const beforePut = await api.get(base_url)
+    const id = beforePut.body[0]['id']
+
+
+    //Send the request
+    const response = await api
+      .put(`${base_url}/${id}`)
+      .send(payload)
+      .expect(201)
+
+    //Validate the request
+    const afterPut = await api.get(base_url)
+
+    const updatedBlog = response.body
+    assert.strictEqual(afterPut.body[0]['id'], updatedBlog['id'])
+    assert.strictEqual(afterPut.body[0]['title'], updatedBlog['title'])
+    assert.strictEqual(afterPut.body[0]['author'], updatedBlog['author'])
+    assert.strictEqual(afterPut.body[0]['url'], updatedBlog['url'])
+    assert.strictEqual(afterPut.body[0]['likes'], updatedBlog['likes'])
+
+    assert.strictEqual(payload['title'], updatedBlog['title'])
+
+    // await console.log('Hello')
+  })
+
+  test('Update author', async () => {
+    //Create the request
+    const payload = { 'author' : 'New author' }
+    const beforePut = await api.get(base_url)
+    const id = beforePut.body[0]['id']
+
+
+    //Send the request
+    const response = await api
+      .put(`${base_url}/${id}`)
+      .send(payload)
+      .expect(201)
+
+    //Validate the request
+    const afterPut = await api.get(base_url)
+
+    const updatedBlog = response.body
+    assert.strictEqual(afterPut.body[0]['id'], updatedBlog['id'])
+    assert.strictEqual(afterPut.body[0]['title'], updatedBlog['title'])
+    assert.strictEqual(afterPut.body[0]['author'], updatedBlog['author'])
+    assert.strictEqual(afterPut.body[0]['url'], updatedBlog['url'])
+    assert.strictEqual(afterPut.body[0]['likes'], updatedBlog['likes'])
+
+    assert.strictEqual(payload['author'], updatedBlog['author'])
+    // await console.log('Hello')
+  })
+
+  test('Update url', async () => {
+    //Create the request
+    const payload = { 'url' : 'New url' }
+    const beforePut = await api.get(base_url)
+    const id = beforePut.body[0]['id']
+
+
+    //Send the request
+    const response = await api
+      .put(`${base_url}/${id}`)
+      .send(payload)
+      .expect(201)
+
+    //Validate the request
+    const afterPut = await api.get(base_url)
+
+    const updatedBlog = response.body
+    assert.strictEqual(afterPut.body[0]['id'], updatedBlog['id'])
+    assert.strictEqual(afterPut.body[0]['title'], updatedBlog['title'])
+    assert.strictEqual(afterPut.body[0]['author'], updatedBlog['author'])
+    assert.strictEqual(afterPut.body[0]['url'], updatedBlog['url'])
+    assert.strictEqual(afterPut.body[0]['likes'], updatedBlog['likes'])
+
+    assert.strictEqual(payload['url'], updatedBlog['url'])
+
+    // await console.log('Hello')
+  })
+
+  test('Update likes', async () => {
+    //Create the request
+    const payload = { 'likes' : 20 }
+    const beforePut = await api.get(base_url)
+    const id = beforePut.body[0]['id']
+
+
+    //Send the request
+    const response = await api
+      .put(`${base_url}/${id}`)
+      .send(payload)
+      .expect(201)
+    console.log(response.body)
+    //Validate the request
+    const afterPut = await api.get(base_url)
+    const updatedBlog = response.body
+    assert.strictEqual(afterPut.body[0]['id'], updatedBlog['id'])
+    assert.strictEqual(afterPut.body[0]['title'], updatedBlog['title'])
+    assert.strictEqual(afterPut.body[0]['author'], updatedBlog['author'])
+    assert.strictEqual(afterPut.body[0]['url'], updatedBlog['url'])
+    assert.strictEqual(afterPut.body[0]['likes'], updatedBlog['likes'])
+
+    assert.strictEqual(payload['likes'], updatedBlog['likes'])
+    // await console.log('Hello')
+  })
+
+  test('Invalid Id', async () => {
+    //Create the request
+    const fake_id = 1
+    const payload = { 'likes' : 20 }
+
+    //Send the request
+    await api
+      .put(`${base_url}/${fake_id}`)
+      .send(payload)
+      .expect(404)
+
+  })
+})
 
 after(async () => {
   await mongoose.connection.close()
