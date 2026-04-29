@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const blogRouter = require('./controllers/blogRouter')
 const userRouter = require('./controllers/userRouter')
 const config = require('./utils/config')
+const loginRouter = require('./controllers/loginRouter')
 
 const app = express()
 
@@ -13,7 +14,7 @@ mongoose.connect(mongoUrl, { family: 4 })
 app.use(express.json())
 app.use(middleware.requestLogger)
 
-
+app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogRouter)
 app.use('/api/users', userRouter)
 app.use(middleware.unknownEndpoint)
