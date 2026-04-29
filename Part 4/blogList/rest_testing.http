@@ -10,7 +10,7 @@ Content-Type: application/json
  }
 
 ### Test Delete request
-DELETE http://localhost:3003/api/blogs/69ea54a222c0294ae7239e24 http//1.1
+DELETE http://localhost:3003/api/blogs/69f12780dab07de10afc17a4 http//1.1
 
 
 ### Test new user request
@@ -18,7 +18,7 @@ POST http://localhost:3003/api/users http//1.1
 Content-Type: application/json
 
 {
-  "username": "bbBuilder2",
+  "username": "bb3",
   "password": "Can we build it?",
   "name": "Bob"
 }
