@@ -1,4 +1,4 @@
-const Login = ({username, setUsername, password, setPassword, handleLogin, loginMessage}) => (
+const Login = ({username, setUsername, password, setPassword, handleLogin}) => (
   <div>
     <form onSubmit={handleLogin}>
       <h2>Login</h2>
@@ -15,13 +15,6 @@ const Login = ({username, setUsername, password, setPassword, handleLogin, login
         </label>
       </div>
       <button type="submit">Login</button>
-      { loginMessage && (
-        <div>
-          <p>
-            {loginMessage}
-          </p>
-        </div>
-      )}
     </form>
   </div>
 )

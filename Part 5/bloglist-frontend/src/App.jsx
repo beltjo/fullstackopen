@@ -18,9 +18,9 @@ const LoggedInDiv = (username, logoutFunction) => {
   </div>
 } 
 
-const LoginDiv = (username, setUsername, password, setPassword, handleLogin, loginMessage) => {
+const LoginDiv = (username, setUsername, password, setPassword, handleLogin) => {
   console.log(username)
-  return <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} handleLogin={handleLogin} loginMessage={loginMessage} />
+  return <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} handleLogin={handleLogin} />
 }
 
 const BlogCreateDiv = (title, setTitle, author, setAuthor, url, setUrl, handleCreateBlog) => {
@@ -52,14 +52,29 @@ const BlogCreateDiv = (title, setTitle, author, setAuthor, url, setUrl, handleCr
   </>
 }
 
+const notificationDiv = (notificationMessage, setNotificationMessage) => {
+  if (notificationMessage === null) {
+    return
+  }
+  
+  setTimeout( () => {
+    setNotificationMessage(null)
+  }, 7000)
+
+  return <div className={notificationMessage.type}>
+    <p>
+      {notificationMessage.message}
+    </p>
+  </div>
+}
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [loginMessage, setLoginMessage] = useState(null)
-  //const [userToken, setUserToken] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -78,9 +93,10 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: "alert" } )
     } catch (error) {
       console.error(error)
-      setLoginMessage( error.response.data.error )
+      setNotificationMessage( { message: `${error.response.data}`, type: "error" } )
     }
   }
 
@@ -89,7 +105,7 @@ const App = () => {
   const handleLogin = async (event) => {
 
     event.preventDefault();
-    setLoginMessage(null)
+    setNotificationMessage(null)
 
 
     console.log('Logging in with ', username, ' and ', password)
@@ -103,7 +119,7 @@ const App = () => {
       window.localStorage.setItem({userWord}, JSON.stringify(user))
     } catch( error ) {
       console.error(error)
-      setLoginMessage( error.response.data.error )
+      setNotificationMessage( { message: `${error.response.data.error}`, type: "error" } )
     }
 
   }
@@ -132,7 +148,8 @@ const App = () => {
 
   return (
     <div>
-      { !user && LoginDiv(username, setUsername, password, setPassword, handleLogin, loginMessage) }
+      { notificationDiv(notificationMessage, setNotificationMessage)}
+      { !user && LoginDiv(username, setUsername, password, setPassword, handleLogin) }
       { user && LoggedInDiv(user.name, logoutFunction) }
       { user && BlogsDiv(blogs) }
       { user && BlogCreateDiv(title, setTitle, author, setAuthor, url, setUrl, handleCreateBlog)}

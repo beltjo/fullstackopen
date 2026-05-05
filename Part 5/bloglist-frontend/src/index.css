@@ -1,0 +1,15 @@
+.alert {
+  color: green;
+  background-color: lightgrey;
+  border: thick solid green;
+  padding: 0.5em;
+  margin: 1em;
+}
+
+.error {
+  color: red;
+  background-color: lightgrey;
+  border: thick solid red;
+  padding: 0.5em;
+  margin: 1em;
+}
