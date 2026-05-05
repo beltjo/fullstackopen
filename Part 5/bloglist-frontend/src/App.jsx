@@ -23,6 +23,36 @@ const LoginDiv = (username, setUsername, password, setPassword, handleLogin, log
   return <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} handleLogin={handleLogin} loginMessage={loginMessage} />
 }
 
+const BlogCreateDiv = (title, setTitle, author, setAuthor, url, setUrl, handleCreateBlog) => {
+  return <>
+    <div>
+      <form onSubmit={handleCreateBlog}>
+        <h2>create new</h2>
+        <div>
+          <label>
+            title:
+            <input type="text" value={title} onChange={ ({ target }) => setTitle(target.value)}/>
+          </label>
+        </div>
+        <div>
+          <label>
+            author:
+            <input type="text" value={author} onChange={ ({ target }) => setAuthor(target.value)}/>
+          </label>
+        </div>
+        <div>
+          <label>
+            url:
+            <input type="text" value={url} onChange={ ({ target }) => setUrl(target.value)}/>
+          </label>
+        </div>
+        <button type="submit">Create Blog</button>
+      </form>
+    </div>
+  </>
+}
+
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -30,6 +60,30 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [loginMessage, setLoginMessage] = useState(null)
   //const [userToken, setUserToken] = useState(null)
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+  
+  const handleCreateBlog = async (event) => {
+    event.preventDefault();
+    try{
+      const blogObject = {
+        title: title,
+        author: author,
+        url: url
+      }
+      const returnedBlog = await blogService.postBlog(blogObject)
+      
+      setBlogs(blogs.concat(returnedBlog))
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    } catch (error) {
+      console.error(error)
+      setLoginMessage( error.response.data.error )
+    }
+  }
+
 
   const userWord = 'user'
   const handleLogin = async (event) => {
@@ -71,6 +125,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
       console.log(user)      
     }
   }, [])
@@ -80,6 +135,7 @@ const App = () => {
       { !user && LoginDiv(username, setUsername, password, setPassword, handleLogin, loginMessage) }
       { user && LoggedInDiv(user.name, logoutFunction) }
       { user && BlogsDiv(blogs) }
+      { user && BlogCreateDiv(title, setTitle, author, setAuthor, url, setUrl, handleCreateBlog)}
     </div>
 
   )
