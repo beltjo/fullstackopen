@@ -1,9 +1,47 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Blogs from './components/Blogs'
+import Login from './components/Login'
+import loginService from './services/login'
 import blogService from './services/blogs'
+
+const BlogsDiv = (blogs) => {
+  return <Blogs blogs={blogs} />
+} 
+
+const LoginDiv = (username, setUsername, password, setPassword, handleLogin, loginMessage) => {
+  console.log(username)
+  return <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} handleLogin={handleLogin} loginMessage={loginMessage} />
+}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [loginMessage, setLoginMessage] = useState(null)
+
+  const handleLogin = async (event) => {
+
+    event.preventDefault();
+    setLoginMessage(null)
+
+
+    console.log('Logging in with ', username, ' and ', password)
+    try {
+      const user = await loginService.handleLogin({username, password})
+
+      console.log("user is ", user)
+      setUser(user)
+      setUsername('')
+      setPassword('')
+    } catch( error ) {
+      console.error(error)
+      setLoginMessage( error.response.data.error )
+    }
+
+  }
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -13,11 +51,10 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      { !user && LoginDiv(username, setUsername, password, setPassword, handleLogin, loginMessage) }
+      { user && BlogsDiv(blogs) }
     </div>
+
   )
 }
 
