@@ -5,6 +5,27 @@ import Login from './components/Login'
 import loginService from './services/login'
 import blogService from './services/blogs'
 
+const Togglable = ( props ) => {
+  const [visible, setVisible] = useState(false)
+  const hideWhenVisible = { display : visible ? 'none' : ''}
+  const showWhenVisible = { display : visible ? '' : 'none' }
+
+  const toggleVisibility = () => {
+    return setVisible(!visible)
+  }
+
+  return <div>
+    <div style={hideWhenVisible}>
+      <button onClick={toggleVisibility} >{props.buttonLabel}</button>
+    </div>
+    <div style={showWhenVisible}>
+      {props.children}
+      <button onClick={toggleVisibility}> Cancel</button>
+    </div>
+  </div>
+}
+
+
 const BlogsDiv = (blogs) => {
   return <Blogs blogs={blogs} />
 } 
@@ -23,34 +44,60 @@ const LoginDiv = (username, setUsername, password, setPassword, handleLogin) => 
   return <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} handleLogin={handleLogin} />
 }
 
-const BlogCreateDiv = (title, setTitle, author, setAuthor, url, setUrl, handleCreateBlog) => {
-  return <>
-    <div>
-      <form onSubmit={handleCreateBlog}>
-        <h2>create new</h2>
-        <div>
-          <label>
-            title:
-            <input type="text" value={title} onChange={ ({ target }) => setTitle(target.value)}/>
-          </label>
-        </div>
-        <div>
-          <label>
-            author:
-            <input type="text" value={author} onChange={ ({ target }) => setAuthor(target.value)}/>
-          </label>
-        </div>
-        <div>
-          <label>
-            url:
-            <input type="text" value={url} onChange={ ({ target }) => setUrl(target.value)}/>
-          </label>
-        </div>
-        <button type="submit">Create Blog</button>
-      </form>
-    </div>
-  </>
+const CreateForm = (props) => {
+  console.log('props of createForm:', props)
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
+  const handleCreateBlog = async (event) => {
+    event.preventDefault();
+    try{
+      const blogObject = {
+        title: title,
+        author: author,
+        url: url
+      }
+      const returnedBlog = await blogService.postBlog(blogObject)
+      
+      props.setBlogs(props.blogs.concat(returnedBlog))
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+      props.setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: "alert" } )
+    } catch (error) {
+      console.error(error)
+      props.setNotificationMessage( { message: `${error.response.data}`, type: "error" } )
+    }
+  }
+
+
+  return <div>
+    <form onSubmit={handleCreateBlog}>
+      <h2>create new</h2>
+      <div>
+        <label>
+          title:
+          <input type="text" value={title} onChange={ ({ target }) => setTitle(target.value)}/>
+        </label>
+      </div>
+      <div>
+        <label>
+          author:
+          <input type="text" value={author} onChange={ ({ target }) => setAuthor(target.value)}/>
+        </label>
+      </div>
+      <div>
+        <label>
+          url:
+          <input type="text" value={url} onChange={ ({ target }) => setUrl(target.value)}/>
+        </label>
+      </div>
+      <button type="submit">Create Blog</button>
+    </form>
+  </div>
 }
+
 
 const notificationDiv = (notificationMessage, setNotificationMessage) => {
   if (notificationMessage === null) {
@@ -75,30 +122,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-  
-  const handleCreateBlog = async (event) => {
-    event.preventDefault();
-    try{
-      const blogObject = {
-        title: title,
-        author: author,
-        url: url
-      }
-      const returnedBlog = await blogService.postBlog(blogObject)
-      
-      setBlogs(blogs.concat(returnedBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: "alert" } )
-    } catch (error) {
-      console.error(error)
-      setNotificationMessage( { message: `${error.response.data}`, type: "error" } )
-    }
-  }
 
 
   const userWord = 'user'
@@ -152,7 +175,13 @@ const App = () => {
       { !user && LoginDiv(username, setUsername, password, setPassword, handleLogin) }
       { user && LoggedInDiv(user.name, logoutFunction) }
       { user && BlogsDiv(blogs) }
-      { user && BlogCreateDiv(title, setTitle, author, setAuthor, url, setUrl, handleCreateBlog)}
+      { user && (<>
+        <Togglable buttonLabel='Create Blog'>
+          <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage}/>
+        </Togglable>
+        </>)
+        }
+
     </div>
 
   )
