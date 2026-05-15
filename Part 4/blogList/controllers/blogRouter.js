@@ -58,8 +58,18 @@ blogRouter.delete('/:id', async (request, response) => {
 
 blogRouter.put('/:id', async (request, response) => {
   const id = request.params.id
-  console.log(id)
-  console.log(request.body)
+  console.log('Put got the id: ', id)
+  console.log('Put got the request: ', request.body)
+
+  let token = null
+  const authorization = request.get('authorization')
+  if ( authorization && authorization.startsWith('Bearer ')) {
+    token = authorization.replace('Bearer ', '')
+  }
+  const decodedToken = jwt.verify(token, config.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'Invalid token' })
+  }
 
   let blog
   try {
@@ -67,7 +77,7 @@ blogRouter.put('/:id', async (request, response) => {
   } catch {
     response.status(404).json('Invalid id')
   }
-  console.log(blog)
+  console.log('Updated the blog: ', blog)
 
 
   response.status(201).json(blog)

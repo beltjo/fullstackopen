@@ -1,6 +1,7 @@
 import {useState} from 'react'
+import BlogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, blogs, setBlogs}) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -8,6 +9,21 @@ const Blog = ({ blog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
+
+  const likeBlog = async (blog, blogs) => {
+    console.log(blog)
+    console.log(blogs)
+    const response = await BlogService.LikeBlog(blog)
+    console.log('LikeBlog response: ', response)
+
+    const blogsWithoutOldItem = blogs.filter( (blog) => {
+      return blog.id !== response.id
+    })
+    const updatedBlogs = blogsWithoutOldItem.concat(response)
+    console.log("Updated blogs to new list: ", updatedBlogs)
+    setBlogs(updatedBlogs)
+  }
+
 
   const [detailsVisible, setDetailsVisible] = useState(false)
 
@@ -19,7 +35,7 @@ const Blog = ({ blog }) => {
     { detailsVisible && (
       <>
         <div>{blog.url}</div>
-        <div>likes {blog.likes} <button>like</button> </div>
+        <div>likes {blog.likes} <button onClick={ () => { likeBlog(blog, blogs) }}>like</button> </div>
         <div>{blog.author}</div>
       </>
     )}

@@ -26,6 +26,29 @@ const postBlog = async ( newBlog ) => {
 
 }
 
+const LikeBlog = async ( blog ) => {
+  console.log(blog)
+
+  const newBlog = { 
+    likes: blog.likes + 1,
+    id: blog.id
+  }
+
+  console.log(newBlog)
+  return await updateBlog(newBlog)
+}
+
+const updateBlog = async ( newBlog ) => {
+  console.log('Preparing to put blog:', newBlog)
+
+  const config = {
+    headers: { Authorization : token } 
+  }
+  console.log('Sending request to ', `${baseUrl}/${newBlog.id}`)
+  const response = await axios.put(`${baseUrl}/${newBlog.id}`, newBlog, config)
+  console.log('Response: ', response.data)
+  return response.data
+}
 
 
-export default { setToken, postBlog, getAll }
+export default { setToken, postBlog, getAll, LikeBlog }

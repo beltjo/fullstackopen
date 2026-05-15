@@ -27,8 +27,8 @@ const Togglable = ( props ) => {
 }
 
 
-const BlogsDiv = (blogs) => {
-  return <Blogs blogs={blogs} />
+const BlogsDiv = (blogs, setBlogs) => {
+  return <Blogs blogs={blogs} setBlogs={setBlogs} />
 } 
 
 const LoggedInDiv = (username, logoutFunction) => {
@@ -121,7 +121,7 @@ const App = () => {
       { notificationDiv(notificationMessage, setNotificationMessage)}
       { !user && LoginDiv(username, setUsername, password, setPassword, handleLogin) }
       { user && LoggedInDiv(user.name, logoutFunction) }
-      { user && BlogsDiv(blogs) }
+      { user && BlogsDiv(blogs, setBlogs) }
       { user && (<>
         <Togglable buttonLabel='Create Blog'>
           <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage}/>
