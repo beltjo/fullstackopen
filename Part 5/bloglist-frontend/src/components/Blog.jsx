@@ -21,6 +21,10 @@ const Blog = ({ blog, blogs, setBlogs}) => {
     })
     const updatedBlogs = blogsWithoutOldItem.concat(response)
     console.log("Updated blogs to new list: ", updatedBlogs)
+    updatedBlogs.sort((a, b) => {
+      return b.likes - a.likes
+    })
+    console.log("Sorted blog: ", updatedBlogs)
     setBlogs(updatedBlogs)
   }
 
