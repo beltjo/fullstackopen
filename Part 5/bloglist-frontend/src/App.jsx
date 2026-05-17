@@ -8,7 +8,7 @@ import CreateForm from './components/CreateForm'
 
 const Togglable = ( props ) => {
   const [visible, setVisible] = useState(false)
-  const hideWhenVisible = { display : visible ? 'none' : ''}
+  const hideWhenVisible = { display : visible ? 'none' : '' }
   const showWhenVisible = { display : visible ? '' : 'none' }
 
   const toggleVisibility = () => {
@@ -29,16 +29,16 @@ const Togglable = ( props ) => {
 
 const BlogsDiv = (blogs, setBlogs, user) => {
   return <Blogs blogs={blogs} setBlogs={setBlogs} user={user}/>
-} 
+}
 
 const LoggedInDiv = (username, logoutFunction) => {
   return <div>
     <label>
-    {username} logged in
-    <button type="button" onClick={logoutFunction}>logout</button>
+      {username} logged in
+      <button type="button" onClick={logoutFunction}>logout</button>
     </label>
   </div>
-} 
+}
 
 const LoginDiv = (username, setUsername, password, setPassword, handleLogin) => {
   console.log(username)
@@ -50,7 +50,7 @@ const notificationDiv = (notificationMessage, setNotificationMessage) => {
   if (notificationMessage === null) {
     return
   }
-  
+
   setTimeout( () => {
     setNotificationMessage(null)
   }, 7000)
@@ -74,45 +74,45 @@ const App = () => {
   const userWord = 'user'
   const handleLogin = async (event) => {
 
-    event.preventDefault();
+    event.preventDefault()
     setNotificationMessage(null)
 
 
     console.log('Logging in with ', username, ' and ', password)
     try {
-      const user = await loginService.handleLogin({username, password})
+      const user = await loginService.handleLogin({ username, password })
       blogService.setToken(user.token)
-      console.log("user is ", user)
+      console.log('user is ', user)
       setUser(user)
       setUsername('')
       setPassword('')
-      window.localStorage.setItem({userWord}, JSON.stringify(user))
+      window.localStorage.setItem({ userWord }, JSON.stringify(user))
     } catch( error ) {
       console.error(error)
-      setNotificationMessage( { message: `${error.response.data.error}`, type: "error" } )
+      setNotificationMessage( { message: `${error.response.data.error}`, type: 'error' } )
     }
 
   }
 
   const logoutFunction = () => {
     setUser(null)
-    window.localStorage.removeItem({userWord})
+    window.localStorage.removeItem({ userWord })
   }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs.sort( (a,b) => b.likes - a.likes ) )
-    )  
+    )
   }, [])
 
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem({userWord})
+    const loggedUserJSON = window.localStorage.getItem({ userWord })
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      console.log(user)      
+      console.log(user)
     }
   }, [])
 
@@ -126,8 +126,8 @@ const App = () => {
         <Togglable buttonLabel='Create Blog'>
           <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage}/>
         </Togglable>
-        </>)
-        }
+      </>)
+      }
 
     </div>
 

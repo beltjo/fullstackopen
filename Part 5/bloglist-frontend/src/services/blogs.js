@@ -15,7 +15,7 @@ const getAll = () => {
 const postBlog = async ( newBlog ) => {
   console.log(newBlog)
   console.log(token)
- 
+
   const config = {
     headers: { Authorization: token }
   }
@@ -29,7 +29,7 @@ const postBlog = async ( newBlog ) => {
 const LikeBlog = async ( blog ) => {
   console.log(blog)
 
-  const newBlog = { 
+  const newBlog = {
     likes: blog.likes + 1,
     id: blog.id
   }
@@ -42,7 +42,7 @@ const updateBlog = async ( newBlog ) => {
   console.log('Preparing to put blog:', newBlog)
 
   const config = {
-    headers: { Authorization : token } 
+    headers: { Authorization : token }
   }
   console.log('Sending request to ', `${baseUrl}/${newBlog.id}`)
   const response = await axios.put(`${baseUrl}/${newBlog.id}`, newBlog, config)

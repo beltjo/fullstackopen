@@ -1,12 +1,12 @@
-const Login = ({username, setUsername, password, setPassword, handleLogin}) => (
+const Login = ({ username, setUsername, password, setPassword, handleLogin }) => (
   <div>
     <form onSubmit={handleLogin}>
       <h2>Login</h2>
       <div>
         <label>
           username
-          <input type="text" value={username} onChange={ ( {target} ) => setUsername(target.value)} />
-        </label>  
+          <input type="text" value={username} onChange={ ( { target } ) => setUsername(target.value)} />
+        </label>
       </div>
       <div>
         <label>

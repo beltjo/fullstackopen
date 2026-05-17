@@ -9,7 +9,7 @@ const CreateForm = (props) => {
   const [url, setUrl] = useState('')
 
   const handleCreateBlog = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     try{
       const blogObject = {
         title: title,
@@ -17,15 +17,15 @@ const CreateForm = (props) => {
         url: url
       }
       const returnedBlog = await blogService.postBlog(blogObject)
-      
+
       props.setBlogs(props.blogs.concat(returnedBlog))
       setTitle('')
       setAuthor('')
       setUrl('')
-      props.setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: "alert" } )
+      props.setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: 'alert' } )
     } catch (error) {
       console.error(error)
-      props.setNotificationMessage( { message: `${error.response.data}`, type: "error" } )
+      props.setNotificationMessage( { message: `${error.response.data}`, type: 'error' } )
     }
   }
 
