@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import BlogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, user }) => {
+const Blog = ({ blog, blogs, likeBlog, deleteBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -9,41 +8,6 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-
-  const likeBlog = async (blog, blogs) => {
-    console.log(blog)
-    console.log(blogs)
-    const response = await BlogService.LikeBlog(blog)
-    console.log('LikeBlog response: ', response)
-
-    const blogsWithoutOldItem = blogs.filter( (blog) => {
-      return blog.id !== response.id
-    })
-    const updatedBlogs = blogsWithoutOldItem.concat(response)
-    console.log('Updated blogs to new list: ', updatedBlogs)
-    updatedBlogs.sort((a, b) => {
-      return b.likes - a.likes
-    })
-    console.log('Sorted blog: ', updatedBlogs)
-    setBlogs(updatedBlogs)
-  }
-
-  const deleteBlog = async (blog, blogs) => {
-    console.log('Starting delete of ', blog)
-
-    const choice = window.confirm(`Are you sure you want to delete ${blog.title}?`)
-
-    if (choice) {
-      const response = await BlogService.deleteBlog(blog)
-      const blogsWithoutItem = blogs.filter( (blog) => {
-        return blog.id !== response.id
-      })
-      setBlogs(blogsWithoutItem)
-    }
-
-  }
-
-
   const [detailsVisible, setDetailsVisible] = useState(false)
 
   const buttonText = detailsVisible ? 'hide' : 'show'

@@ -124,7 +124,7 @@ const App = () => {
       { user && BlogsDiv(blogs, setBlogs, user) }
       { user && (<>
         <Togglable buttonLabel='Create Blog'>
-          <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage}/>
+          <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage} postBlog={blogService.postBlog}/>
         </Togglable>
       </>)
       }

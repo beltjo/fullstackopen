@@ -1,9 +1,7 @@
-import blogService from '../services/blogs'
 import { useState } from 'react'
 
 
 const CreateForm = (props) => {
-  console.log('props of createForm:', props)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -16,8 +14,7 @@ const CreateForm = (props) => {
         author: author,
         url: url
       }
-      const returnedBlog = await blogService.postBlog(blogObject)
-
+      const returnedBlog = await props.postBlog(blogObject)
       props.setBlogs(props.blogs.concat(returnedBlog))
       setTitle('')
       setAuthor('')
@@ -36,19 +33,19 @@ const CreateForm = (props) => {
       <div>
         <label>
           title:
-          <input type="text" value={title} onChange={ ({ target }) => setTitle(target.value)}/>
+          <input placeholder="write title here" type="text" value={title} onChange={ ({ target }) => setTitle(target.value)}/>
         </label>
       </div>
       <div>
         <label>
           author:
-          <input type="text" value={author} onChange={ ({ target }) => setAuthor(target.value)}/>
+          <input placeholder="write author here" type="text" value={author} onChange={ ({ target }) => setAuthor(target.value)}/>
         </label>
       </div>
       <div>
         <label>
           url:
-          <input type="text" value={url} onChange={ ({ target }) => setUrl(target.value)}/>
+          <input placeholder="write url here" type="text" value={url} onChange={ ({ target }) => setUrl(target.value)}/>
         </label>
       </div>
       <button type="submit">Create Blog</button>
