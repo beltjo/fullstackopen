@@ -44,3 +44,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJiM
   "url": "fake_url",
   "likes": 310
 }
+
+###
+POST http://localhost:3003/api/testing/reset http//1.1
