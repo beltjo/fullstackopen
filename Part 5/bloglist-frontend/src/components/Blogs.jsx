@@ -35,7 +35,7 @@ const Blogs = ({ blogs, setBlogs, user }) => {
 
   }
 
-  return <div>
+  return <div id='Blogs'>
     <h2>blogs</h2>
     {blogs.map(blog =>
       <Blog key={blog.id} blog={blog} blogs={blogs} likeBlog={likeBlog} deleteBlog={deleteBlog} user={user}/>
