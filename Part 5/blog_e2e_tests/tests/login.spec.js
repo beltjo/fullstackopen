@@ -7,11 +7,23 @@ const login = async (page, username, password) => {
   await page.getByRole('button', { name: "Login"}).click()
 }
 
+const createBlog = async (page, title, author, url) => {
+  await page.getByRole('button', { name: 'Create Blog'} ).click()
+  await page.getByPlaceholder('write title here').fill(title)
+  await page.getByPlaceholder('write author here').fill(author)
+  await page.getByPlaceholder('write url here').fill(url)
+  await page.waitForTimeout(500)
+  await page.getByRole('button', {name: 'Create Blog'}).click()
+  await page.getByRole('button', {name: 'Cancel'} ).click()
+  await page.waitForTimeout(7000)
+}
 
 describe('Blog app', () => {
   const testUsername = "test"
   const testPassword = "password"
   const testName = 'tester'
+  const testUsername2 = "test2"
+  const testName2 = 'tester2'
   beforeEach(async ({ page }) => {
     // Clear the database
     await axios.post('http://localhost:3003/api/testing/reset')
@@ -22,6 +34,15 @@ describe('Blog app', () => {
       "username": testUsername,
       "password": testPassword,
       "name": testName
+      }
+    )
+
+    // Create a second test user
+    await axios.post('http://localhost:3003/api/users', 
+      {
+      "username": testUsername2,
+      "password": testPassword,
+      "name": testName2
       }
     )
 
@@ -74,6 +95,97 @@ describe('Blog app', () => {
       
       await expect(page.locator('#Blogs').getByText(title, {exact:false})).toBeVisible()
     })
+
+    describe('Interacting with blogs', ()=> {
+      const targetBlogText = "test blog"
+      const initialLikes = 0
+      beforeEach(async({ page }) => {
+        //Need to set up a few blogs to start with.
+        //await axios.post()
+        const testBlogs = [ 
+          {
+              "title": "10 speedrunning tricks.",
+              "author": "Simple",
+              "url": "fake_url",
+              "likes": 2
+          },
+          {
+              "title": targetBlogText,
+              "author": "tester",
+              "url": "fake_url",
+              "likes": initialLikes
+          }
+        ]
+
+        await createBlog(page, targetBlogText, testName, "fake_url")
+        await createBlog(page, "10 speedrunning tricks.", "Simple", "faker_url")
+      })
+
+      test('Able to like a blog', async({page}) => {
+
+        await page
+            .getByRole('button',{ name: "show"}).first()
+            .click()
+        await page
+          .getByRole("button", { name: "like"})
+          .click()
+          
+        await expect(page.getByText(`likes ${initialLikes + 1}`)).toBeVisible()
+      })
+
+      test('Able to delete a blog', async ( { page })=> {
+        await page
+            .getByRole('button',{ name: "show"}).first()
+            .click()
+        
+        page.on('dialog', dialog => dialog.accept());
+        await page
+          .getByRole("button", { name: "delete"})
+          .click()
+        await expect(page.getByText(targetBlogText)).toBeHidden()
+      })
+
+      test('Only the owner of a blog can delete it.', async({ page }) => {
+        //See the delete is not there.
+        await page 
+          .getByRole('button', { name : "show"}).nth(1)
+          .click()
+        
+        await expect(page.getByRole('button', { name: "delete"})).toBeHidden()
+
+      })
+      
+      test('Blogs are ordered by likes', async ( {page}) => {
+        const buttons = await page
+          .getByRole('button',{ name: "show"})
+
+        await page
+          .getByRole('button',{ name: "show"})
+          .first()
+          .click()
+
+        await page
+          .getByRole("button", { name: "like"})
+          .click()
+
+        await page
+          .getByRole('button',{ name: "show"})
+          .click()
+        
+        const divs = await page.getByText('likes', {exact: false}).all()
+        const likeCounts = []
+        for (const div of divs) {
+          console.log('Inner text:')
+          console.log(await div.innerText())
+          let rawText = await div.innerText()
+          let likeCount = rawText.split(" ")[1]
+          likeCounts.push(likeCount)
+        }
+        expect(parseInt(likeCounts[0]) > parseInt(likeCounts[1])).toBeTruthy()
+        
+      })
+    })
+    
   })
 
 
