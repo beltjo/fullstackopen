@@ -14,7 +14,10 @@ const Blog = ({ blog, blogs, likeBlog, deleteBlog, user }) => {
   //This isn't the best way to determine ownership.  Really, it would depend on how we attribute ownership.  If the one that uploads the entry has ownership, then we want
   // to store the uploaded as the owner.  If we want the owner to be the author, we would want a way to denote a unique id to the author rather than just compare the names
   // of the user to the author.  For ease, we'll just match the name and understand the limitation in the design if this would be expanded.
-  const OwnsBlog = blog.author === user.name
+  let OwnsBlog = false
+  if (user) {
+    OwnsBlog = blog.author === user.name
+  }
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}

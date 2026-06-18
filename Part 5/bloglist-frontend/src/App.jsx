@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Blogs from './components/Blogs'
 import Login from './components/Login'
-import loginService from './services/login'
 import blogService from './services/blogs'
 import CreateForm from './components/CreateForm'
+import Logout from './components/Logout'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
 
 const Togglable = ( props ) => {
   const [visible, setVisible] = useState(false)
@@ -31,21 +35,6 @@ const BlogsDiv = (blogs, setBlogs, user) => {
   return <Blogs blogs={blogs} setBlogs={setBlogs} user={user}/>
 }
 
-const LoggedInDiv = (username, logoutFunction) => {
-  return <div>
-    <label>
-      {username} logged in
-      <button type="button" onClick={logoutFunction}>logout</button>
-    </label>
-  </div>
-}
-
-const LoginDiv = (username, setUsername, password, setPassword, handleLogin) => {
-  console.log(username)
-  return <Login username={username} setUsername={setUsername} password={password} setPassword={setPassword} handleLogin={handleLogin} />
-}
-
-
 const notificationDiv = (notificationMessage, setNotificationMessage) => {
   if (notificationMessage === null) {
     return
@@ -62,42 +51,23 @@ const notificationDiv = (notificationMessage, setNotificationMessage) => {
   </div>
 }
 
+const padding = {
+  padding: 5
+}
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+
   const [notificationMessage, setNotificationMessage] = useState(null)
 
-
+  const loginPath = '/login'
+  const homePath = '/'
   const userWord = 'user'
-  const handleLogin = async (event) => {
-
-    event.preventDefault()
-    setNotificationMessage(null)
 
 
-    console.log('Logging in with ', username, ' and ', password)
-    try {
-      const user = await loginService.handleLogin({ username, password })
-      blogService.setToken(user.token)
-      console.log('user is ', user)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-      window.localStorage.setItem({ userWord }, JSON.stringify(user))
-    } catch( error ) {
-      console.error(error)
-      setNotificationMessage( { message: `${error.response.data.error}`, type: 'error' } )
-    }
 
-  }
-
-  const logoutFunction = () => {
-    setUser(null)
-    window.localStorage.removeItem({ userWord })
-  }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -116,21 +86,38 @@ const App = () => {
     }
   }, [])
 
+
+
   return (
-    <div>
-      { notificationDiv(notificationMessage, setNotificationMessage)}
-      { !user && LoginDiv(username, setUsername, password, setPassword, handleLogin) }
-      { user && LoggedInDiv(user.name, logoutFunction) }
-      { user && BlogsDiv(blogs, setBlogs, user) }
-      { user && (<>
-        <Togglable buttonLabel='Create Blog'>
-          <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage} postBlog={blogService.postBlog}/>
-        </Togglable>
-      </>)
-      }
+    <Router>
+      <div>
+        <Link style={padding} to={homePath}>blogs</Link>
+        { !user && <Link style={padding} to={loginPath}>login</Link> }
+        { user && <Logout setUser={setUser} userWord={userWord} homePath={homePath}></Logout> }
+      </div>
+      <Routes>
+        <Route path={homePath} element= {
+          <div>
+            { notificationDiv(notificationMessage, setNotificationMessage)}
+            { BlogsDiv(blogs, setBlogs, user) }
+            { user && (<>
+              <Togglable buttonLabel='Create Blog'>
+                <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage} postBlog={blogService.postBlog}/>
+              </Togglable>
+            </>)
+            }
 
-    </div>
+          </div>
+        }>
+        </Route>
+        <Route path={loginPath} element={
+          <Login user={user} setUser={setUser} userWord={userWord} homePath={homePath} setNotificationMessage={setNotificationMessage}/>
+        }>
 
+        </Route>
+      </Routes>
+
+    </Router>
   )
 }
 
