@@ -11,6 +11,7 @@ import {
   BrowserRouter as Router,
   Routes, Route, Link
 } from 'react-router-dom'
+import { homePath, loginPath, createPath } from './paths'
 
 const Togglable = ( props ) => {
   const [visible, setVisible] = useState(false)
@@ -64,8 +65,7 @@ const App = () => {
 
   const [notificationMessage, setNotificationMessage] = useState(null)
 
-  const loginPath = '/login'
-  const homePath = '/'
+
   const userWord = 'user'
 
 
@@ -94,6 +94,7 @@ const App = () => {
     <Router>
       <div>
         <Link style={padding} to={homePath}>blogs</Link>
+        { user && <Link style={padding} to={createPath}>Create Blog</Link>}
         { !user && <Link style={padding} to={loginPath}>login</Link> }
         { user && <Logout setUser={setUser} userWord={userWord} homePath={homePath}></Logout> }
       </div>
@@ -102,13 +103,6 @@ const App = () => {
           <div>
             { notificationDiv(notificationMessage, setNotificationMessage)}
             <BlogList blogs={blogs}></BlogList>
-            { user && (<>
-              <Togglable buttonLabel='Create Blog'>
-                <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage} postBlog={blogService.postBlog}/>
-              </Togglable>
-            </>)
-            }
-
           </div>
         }>
         </Route>
@@ -117,6 +111,9 @@ const App = () => {
         }/>
         <Route path='/blogs/:id' element={
           <SingleBlog blogs={blogs} setBlogs={setBlogs} user={user} />
+        }/>
+        <Route path={createPath} element={
+          <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage} postBlog={blogService.postBlog}/>
         }/>
 
       </Routes>

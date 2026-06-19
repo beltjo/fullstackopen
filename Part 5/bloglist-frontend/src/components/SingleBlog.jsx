@@ -1,10 +1,14 @@
 import { useParams } from 'react-router-dom'
 import blogService from '../services/blogs'
+import { useNavigate } from 'react-router-dom'
+import { homePath } from '../paths'
 
 const SingleBlog = ({ blogs, setBlogs, user }) => {
   const id = useParams().id
   const blog = blogs.find(blog => id === blog.id)
+  const navigate = useNavigate()
   console.log('SingleBlog:', blog)
+
   const likeBlog = async (blog, blogs) => {
     console.log(blog)
     console.log(blogs)
@@ -34,6 +38,7 @@ const SingleBlog = ({ blogs, setBlogs, user }) => {
         return blog.id !== response.id
       })
       setBlogs(blogsWithoutItem)
+      navigate(homePath)
     }
 
   }
@@ -52,8 +57,8 @@ const SingleBlog = ({ blogs, setBlogs, user }) => {
   return (
     <div style={blogStyle}>
       {blog.author}: {blog.title}
-      <div>{blog.url}</div>
-      <div>likes {blog.likes} <button onClick={() => {likeBlog(blog, blogs)}}>like</button> </div>
+      <div><a href={blog.url}>{blog.url}</a></div>
+      <div>likes {blog.likes} { user && <button onClick={() => {likeBlog(blog, blogs)}}>like</button> } </div>
       <div>Added by {blog.user.name}</div>
       { OwnsBlog && <div><button onClick={() => deleteBlog(blog, blogs)}>delete</button></div> }
     </div>

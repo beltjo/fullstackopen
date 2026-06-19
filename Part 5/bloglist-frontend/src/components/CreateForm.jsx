@@ -1,10 +1,11 @@
 import { useState } from 'react'
-
-
+import { useNavigate } from 'react-router-dom'
+import { homePath } from '../paths'
 const CreateForm = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const navigate = useNavigate()
 
   const handleCreateBlog = async (event) => {
     event.preventDefault()
@@ -20,6 +21,7 @@ const CreateForm = (props) => {
       setAuthor('')
       setUrl('')
       props.setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: 'alert' } )
+      navigate(homePath)
     } catch (error) {
       console.error(error)
       props.setNotificationMessage( { message: `${error.response.data}`, type: 'error' } )
