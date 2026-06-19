@@ -6,6 +6,7 @@ const config = require('../utils/config')
 
 blogRouter.get('', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
+  console.log('GetAll blogs:', blogs)
   response.json(blogs)
 })
 
@@ -24,6 +25,7 @@ blogRouter.post('', async (request, response) => {
   }
 
   const user = await User.findById(decodedToken.id)
+  console.log(user)
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -73,7 +75,7 @@ blogRouter.put('/:id', async (request, response) => {
 
   let blog
   try {
-    blog = await Blog.findByIdAndUpdate(id, request.body, { returnDocument:'after' } )
+    blog = await Blog.findByIdAndUpdate(id, request.body, { returnDocument:'after' } ).populate('user', { username: 1, name: 1 })
   } catch {
     response.status(404).json('Invalid id')
   }

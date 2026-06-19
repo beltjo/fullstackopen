@@ -8,7 +8,7 @@ const BlogList = ({ blogs }) => {
     <div>
       {blogs.map(blog => {
         const path = `/blogs/${blog.id}`
-        return <div> <Link to={path} >{blog.title} by {blog.author}</Link> </div>
+        return <div key={blog.id} > <Link  to={path} >{blog.title} by {blog.author}</Link> </div>
       }
       )}
     </div>

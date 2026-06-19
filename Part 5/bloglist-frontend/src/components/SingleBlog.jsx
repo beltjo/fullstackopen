@@ -4,7 +4,7 @@ import blogService from '../services/blogs'
 const SingleBlog = ({ blogs, setBlogs, user }) => {
   const id = useParams().id
   const blog = blogs.find(blog => id === blog.id)
-
+  console.log('SingleBlog:', blog)
   const likeBlog = async (blog, blogs) => {
     console.log(blog)
     console.log(blogs)
@@ -47,14 +47,14 @@ const SingleBlog = ({ blogs, setBlogs, user }) => {
   }
   let OwnsBlog = false
   if (user) {
-    OwnsBlog = blog.author === user.name
+    OwnsBlog = blog.user.name === user.name
   }
   return (
     <div style={blogStyle}>
       {blog.author}: {blog.title}
       <div>{blog.url}</div>
       <div>likes {blog.likes} <button onClick={() => {likeBlog(blog, blogs)}}>like</button> </div>
-      <div>Added by {blog.author}</div>
+      <div>Added by {blog.user.name}</div>
       { OwnsBlog && <div><button onClick={() => deleteBlog(blog, blogs)}>delete</button></div> }
     </div>
   )

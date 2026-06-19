@@ -7,9 +7,11 @@ const setToken = newToken => {
   token = `Bearer ${newToken}`
 }
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = async () => {
+  const response = await axios.get(baseUrl)
+  console.log('GetAll response:')
+  console.log(response)
+  return response.data
 }
 
 const postBlog = async ( newBlog ) => {
@@ -35,7 +37,9 @@ const LikeBlog = async ( blog ) => {
   }
 
   console.log(newBlog)
-  return await updateBlog(newBlog)
+  const response = await updateBlog(newBlog)
+  console.log('LikeBlog Response: ', response)
+  return response
 }
 
 const updateBlog = async ( newBlog ) => {
@@ -46,7 +50,7 @@ const updateBlog = async ( newBlog ) => {
   }
   console.log('Sending request to ', `${baseUrl}/${newBlog.id}`)
   const response = await axios.put(`${baseUrl}/${newBlog.id}`, newBlog, config)
-  console.log('Response: ', response.data)
+  console.log('UpdateBlog Response: ', response.data)
   return response.data
 }
 
