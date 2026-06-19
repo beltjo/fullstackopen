@@ -5,6 +5,8 @@ import Login from './components/Login'
 import blogService from './services/blogs'
 import CreateForm from './components/CreateForm'
 import Logout from './components/Logout'
+import SingleBlog from './components/SingleBlog'
+import BlogList from './components/BlogList'
 import {
   BrowserRouter as Router,
   Routes, Route, Link
@@ -99,7 +101,7 @@ const App = () => {
         <Route path={homePath} element= {
           <div>
             { notificationDiv(notificationMessage, setNotificationMessage)}
-            { BlogsDiv(blogs, setBlogs, user) }
+            <BlogList blogs={blogs}></BlogList>
             { user && (<>
               <Togglable buttonLabel='Create Blog'>
                 <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage} postBlog={blogService.postBlog}/>
@@ -112,9 +114,11 @@ const App = () => {
         </Route>
         <Route path={loginPath} element={
           <Login user={user} setUser={setUser} userWord={userWord} homePath={homePath} setNotificationMessage={setNotificationMessage}/>
-        }>
+        }/>
+        <Route path='/blogs/:id' element={
+          <SingleBlog blogs={blogs} setBlogs={setBlogs} user={user} />
+        }/>
 
-        </Route>
       </Routes>
 
     </Router>
