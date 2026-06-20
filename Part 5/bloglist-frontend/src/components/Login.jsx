@@ -2,6 +2,7 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button, TextField } from '@mui/material'
 
 const Login = ({ setUser, homePath, userWord, setNotificationMessage }) => {
   const [username, setUsername] = useState('')
@@ -35,18 +36,12 @@ const Login = ({ setUser, homePath, userWord, setNotificationMessage }) => {
     <form onSubmit={handleLogin}>
       <h2>Login</h2>
       <div>
-        <label>
-          username
-          <input type="text" value={username} onChange={ ( { target } ) => setUsername(target.value)} />
-        </label>
+        <TextField label="username" value={username} onChange={( { target } ) => setUsername(target.value)}/>
       </div>
       <div>
-        <label>
-          password
-          <input type="text" value={password} onChange={ ( { target }) => setPassword(target.value)}/>
-        </label>
+        <TextField label="password" value={password} onChange={ ({ target }) => setPassword(target.value)}/>
       </div>
-      <button type="submit">Login</button>
+      <Button type="submit" variant="contained" style={{ marginTop: 10 }}>Login</Button>
     </form>
   </div>)
 }
