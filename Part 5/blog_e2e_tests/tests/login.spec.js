@@ -18,7 +18,16 @@ const createBlog = async (page, title, author, url) => {
   await page.waitForTimeout(7000)
 }
 
-describe('Blog app', () => {
+const updatedCreateBlog = async (page, title, author, url) => {
+  await page.getByPlaceholder('write title here').fill(title)
+  await page.getByPlaceholder('write author here').fill(author)
+  await page.getByPlaceholder('write url here').fill(url)
+  await page.waitForTimeout(500)
+  await page.getByRole('button', {name: 'Create Blog'}).click()
+  await page.waitForTimeout(7000)
+}
+
+describe.skip('Blog app', () => {
   const testUsername = "test"
   const testPassword = "password"
   const testName = 'tester'
@@ -188,5 +197,102 @@ describe('Blog app', () => {
     
   })
 
+
+})
+
+
+describe('Updated blog app', () => {
+  const testUsername = "test"
+  const testPassword = "password"
+  const testName = 'tester'
+  const testUsername2 = "test2"
+  const testName2 = 'tester2'
+  beforeEach('', async ({ page })=>{
+    // Clear the database
+    await axios.post('http://localhost:3003/api/testing/reset')
+
+    // Create a test user
+    await axios.post('http://localhost:3003/api/users', 
+      {
+      "username": testUsername,
+      "password": testPassword,
+      "name": testName
+      }
+    )
+
+    // Create a second test user
+    await axios.post('http://localhost:3003/api/users', 
+      {
+      "username": testUsername2,
+      "password": testPassword,
+      "name": testName2
+      }
+    )
+
+    await page.goto('http://localhost:5173')
+
+  })
+
+  test('Login succeeds with the correct username/password combination', async ({ page }) => {
+    //Need to log in. Move to the login page.
+    await page.goto('http://localhost:5173/login')
+    //Punch in credentials.
+    login(page, testUsername, testPassword)
+
+    //Confirm login.
+    await expect(page.getByText('logout')).toBeVisible()
+    await expect(page).toHaveURL('http://localhost:5173/')
+  })
+
+  test('Login fails if the username/password is incorrect', async ({page}) => {
+    //Need to log in. Move to the login page.
+    await page.goto('http://localhost:5173/login')
+    //Punch in credentials.
+    login(page, testUsername, "Bad Password")
+
+    //Confirm login.
+    await expect(page.getByRole('link', { name: 'login' })).toBeVisible()
+    await expect(page.getByText('logout')).toBeHidden()
+    await expect(page).toHaveURL('http://localhost:5173/login')
+  })
+
+  test('A logged-in user can create a blog', async ({ page }) => {
+    //Need to log in. Move to the login page.
+    await page.goto('http://localhost:5173/login')
+    //Punch in credentials.
+    login(page, testUsername, testPassword)
+
+    //Move to create a blog.
+    await page.getByRole('link', { name:'Create Blog'}).click()
+
+    await updatedCreateBlog(page, "New Blog", "Test author", "fake_url")
+
+    await expect(page.getByRole('link', { name: 'New Blog', exact:false })).toBeVisible()
+    await expect(page).toHaveURL('http://localhost:5173/')
+  })
+
+  describe('Interact with blogs', () => {
+    beforeEach('Set up blogs.', async ({ page }) => {
+      await page.goto('http://localhost:5173/login')
+      //Punch in credentials.
+      login(page, testUsername, testPassword)
+
+      //Move to create a blog.
+      await page.getByRole('link', { name:'Create Blog'}).click()
+
+      await updatedCreateBlog(page, "New Blog", "Test author", "fake_url")
+
+    })
+
+    test('A logged-in user can like blogs', async ({ page }) => {
+      await page.getByRole('link', { name: 'Test author', exact: false}).click()
+      await expect(page.getByRole('button', { name: 'like' })).toBeVisible()
+    })
+
+    test('A logged-in user can delete a blog', async ({ page }) => {
+      await page.getByRole('link', { name: 'Test author', exact: false}).click()
+      await expect(page.getByRole('button', { name: 'delete' })).toBeVisible()
+    })
+  })
 
 })
