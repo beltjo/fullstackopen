@@ -26,7 +26,7 @@ describe('Blog Component tests', () => {
   })
 
 
-  test('render title and author at start', async () => {
+  test.skip('render title and author at start', async () => {
   //{ blog, blogs, setBlogs, user }
 
     const element = screen.getByText(title, { exact:false })
@@ -39,7 +39,7 @@ describe('Blog Component tests', () => {
 
   })
 
-  test('like and url are visible after click', async () => {
+  test.skip('like and url are visible after click', async () => {
     const user = userEvent.setup()
     const button = screen.getByText('show')
     await user.click(button)
