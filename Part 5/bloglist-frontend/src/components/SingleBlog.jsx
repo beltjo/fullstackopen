@@ -1,46 +1,10 @@
-import { useParams } from 'react-router-dom'
-import blogService from '../services/blogs'
-import { useNavigate } from 'react-router-dom'
-import { homePath } from '../paths'
 
-const SingleBlog = ({ blogs, setBlogs, user }) => {
-  const id = useParams().id
-  const blog = blogs.find(blog => id === blog.id)
-  const navigate = useNavigate()
+
+const SingleBlog = ({ blog, deleteBlog, likeBlog, user }) => {
   console.log('SingleBlog:', blog)
 
-  const likeBlog = async (blog, blogs) => {
-    console.log(blog)
-    console.log(blogs)
-    const response = await blogService.LikeBlog(blog)
-    console.log('LikeBlog response: ', response)
-
-    const blogsWithoutOldItem = blogs.filter( (blog) => {
-      return blog.id !== response.id
-    })
-    const updatedBlogs = blogsWithoutOldItem.concat(response)
-    console.log('Updated blogs to new list: ', updatedBlogs)
-    updatedBlogs.sort((a, b) => {
-      return b.likes - a.likes
-    })
-    console.log('Sorted blog: ', updatedBlogs)
-    setBlogs(updatedBlogs)
-  }
-
-  const deleteBlog = async (blog, blogs) => {
-    console.log('Starting delete of ', blog)
-
-    const choice = window.confirm(`Are you sure you want to delete ${blog.title}?`)
-
-    if (choice) {
-      const response = await blogService.deleteBlog(blog)
-      const blogsWithoutItem = blogs.filter( (blog) => {
-        return blog.id !== response.id
-      })
-      setBlogs(blogsWithoutItem)
-      navigate(homePath)
-    }
-
+  if (!blog) {
+    return null
   }
 
   const blogStyle = {
@@ -58,9 +22,9 @@ const SingleBlog = ({ blogs, setBlogs, user }) => {
     <div style={blogStyle}>
       {blog.author}: {blog.title}
       <div><a href={blog.url}>{blog.url}</a></div>
-      <div>likes {blog.likes} { user && <button onClick={() => {likeBlog(blog, blogs)}}>like</button> } </div>
+      <div>likes {blog.likes} { user && <button onClick={() => {likeBlog(blog)}}>like</button> } </div>
       <div>Added by {blog.user.name}</div>
-      { OwnsBlog && <div><button onClick={() => deleteBlog(blog, blogs)}>delete</button></div> }
+      { OwnsBlog && <div><button onClick={() => deleteBlog(blog)}>delete</button></div> }
     </div>
   )
 

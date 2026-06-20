@@ -8,8 +8,7 @@ import Logout from './components/Logout'
 import SingleBlog from './components/SingleBlog'
 import BlogList from './components/BlogList'
 import {
-  BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, useMatch, useNavigate
 } from 'react-router-dom'
 import { homePath, loginPath, createPath } from './paths'
 
@@ -31,11 +30,6 @@ const Togglable = ( props ) => {
       <button onClick={toggleVisibility}> Cancel</button>
     </div>
   </div>
-}
-
-
-const BlogsDiv = (blogs, setBlogs, user) => {
-  return <Blogs blogs={blogs} setBlogs={setBlogs} user={user}/>
 }
 
 const notificationDiv = (notificationMessage, setNotificationMessage) => {
@@ -62,13 +56,47 @@ const padding = {
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-
   const [notificationMessage, setNotificationMessage] = useState(null)
-
-
+  const match = useMatch('/blogs/:id')
+  const blog = match
+    ? blogs.find(blog => match.params.id === blog.id )
+    : null
   const userWord = 'user'
+  const navigate = useNavigate()
 
+  const likeBlog = async (blog) => {
+    console.log(blog)
+    console.log(blogs)
+    const response = await blogService.LikeBlog(blog)
+    console.log('LikeBlog response: ', response)
 
+    const blogsWithoutOldItem = blogs.filter( (blog) => {
+      return blog.id !== response.id
+    })
+    const updatedBlogs = blogsWithoutOldItem.concat(response)
+    console.log('Updated blogs to new list: ', updatedBlogs)
+    updatedBlogs.sort((a, b) => {
+      return b.likes - a.likes
+    })
+    console.log('Sorted blog: ', updatedBlogs)
+    setBlogs(updatedBlogs)
+  }
+
+  const deleteBlog = async (blog) => {
+    console.log('Starting delete of ', blog)
+
+    const choice = window.confirm(`Are you sure you want to delete ${blog.title}?`)
+
+    if (choice) {
+      const response = await blogService.deleteBlog(blog)
+      const blogsWithoutItem = blogs.filter( (blog) => {
+        return blog.id !== response.id
+      })
+      setBlogs(blogsWithoutItem)
+      navigate(homePath)
+    }
+
+  }
 
 
   useEffect(() => {
@@ -91,7 +119,7 @@ const App = () => {
 
 
   return (
-    <Router>
+    <div>
       <div>
         <Link style={padding} to={homePath}>blogs</Link>
         { user && <Link style={padding} to={createPath}>Create Blog</Link>}
@@ -110,15 +138,14 @@ const App = () => {
           <Login user={user} setUser={setUser} userWord={userWord} homePath={homePath} setNotificationMessage={setNotificationMessage}/>
         }/>
         <Route path='/blogs/:id' element={
-          <SingleBlog blogs={blogs} setBlogs={setBlogs} user={user} />
+          <SingleBlog blog={blog} deleteBlog={deleteBlog} likeBlog={likeBlog} user={user} />
         }/>
         <Route path={createPath} element={
           <CreateForm setBlogs={setBlogs} blogs={blogs} setNotificationMessage={setNotificationMessage} postBlog={blogService.postBlog}/>
         }/>
 
       </Routes>
-
-    </Router>
+    </div>
   )
 }
 
