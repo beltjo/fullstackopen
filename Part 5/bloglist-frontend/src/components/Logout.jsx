@@ -1,3 +1,4 @@
+import { Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 const Logout = ({ setUser, userWord, homePath }) => {
@@ -8,7 +9,7 @@ const Logout = ({ setUser, userWord, homePath }) => {
     navigate(homePath)
   }
 
-  return (<button type="button" onClick={logoutFunction}>logout</button>)
+  return (<Button color='inherit' onClick={logoutFunction}>logout</Button>)
 }
 
 export default Logout

@@ -21,7 +21,7 @@ const CreateForm = (props) => {
       setTitle('')
       setAuthor('')
       setUrl('')
-      props.setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: 'alert' } )
+      props.setNotificationMessage( { message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`, type: 'success' } )
       navigate(homePath)
     } catch (error) {
       console.error(error)

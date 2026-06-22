@@ -11,6 +11,7 @@ import {
   Routes, Route, Link, useMatch, useNavigate
 } from 'react-router-dom'
 import { homePath, loginPath, createPath } from './paths'
+import { Alert, AppBar, Button, Toolbar } from '@mui/material'
 
 const Togglable = ( props ) => {
   const [visible, setVisible] = useState(false)
@@ -41,17 +42,10 @@ const notificationDiv = (notificationMessage, setNotificationMessage) => {
     setNotificationMessage(null)
   }, 7000)
 
-  return <div className={notificationMessage.type}>
-    <p>
-      {notificationMessage.message}
-    </p>
-  </div>
+  return <Alert severity={notificationMessage.type}>
+    {notificationMessage.message}
+  </Alert>
 }
-
-const padding = {
-  padding: 5
-}
-
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -120,18 +114,18 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        <Link style={padding} to={homePath}>blogs</Link>
-        { user && <Link style={padding} to={createPath}>Create Blog</Link>}
-        { !user && <Link style={padding} to={loginPath}>login</Link> }
-        { user && <Logout setUser={setUser} userWord={userWord} homePath={homePath}></Logout> }
-      </div>
+      <AppBar position="sticky">
+        <Toolbar >
+          <Button color='inherit' component={Link} to={homePath}>blogs</Button>
+          { user && <Button color='inherit' component={Link} to={createPath}>Create Blog</Button>}
+          { !user && <Button color='inherit' component={Link} to={loginPath}>login</Button> }
+          { user && <Logout setUser={setUser} userWord={userWord} homePath={homePath}></Logout> }
+        </Toolbar>
+      </AppBar>
+      { notificationDiv(notificationMessage, setNotificationMessage)}
       <Routes>
         <Route path={homePath} element= {
-          <div>
-            { notificationDiv(notificationMessage, setNotificationMessage)}
-            <BlogList blogs={blogs}></BlogList>
-          </div>
+          <BlogList blogs={blogs}></BlogList>
         }>
         </Route>
         <Route path={loginPath} element={
