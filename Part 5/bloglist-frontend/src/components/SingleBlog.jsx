@@ -1,4 +1,4 @@
-
+import { Box, Button, Link, Typography  } from '@mui/material'
 
 const SingleBlog = ({ blog, deleteBlog, likeBlog, user }) => {
   console.log('SingleBlog:', blog)
@@ -19,13 +19,14 @@ const SingleBlog = ({ blog, deleteBlog, likeBlog, user }) => {
     OwnsBlog = blog.user.name === user.name
   }
   return (
-    <div style={blogStyle}>
-      {blog.author}: {blog.title}
-      <div><a href={blog.url}>{blog.url}</a></div>
-      <div>likes {blog.likes} { user && <button onClick={() => {likeBlog(blog)}}>like</button> } </div>
-      <div>Added by {blog.user.name}</div>
-      { OwnsBlog && <div><button onClick={() => deleteBlog(blog)}>delete</button></div> }
-    </div>
+    <Box component='section' sx={{ p:2, border:'1px solid grey' }}>
+      <Typography variant='h2'> {blog.title} </Typography>
+      <Typography variant='h6'> created by {blog.author}</Typography>
+      <Typography variant='h6'><Link variant='inherit' href={blog.url}>{blog.url}</Link></Typography>
+      <Typography variant='h5'>likes {blog.likes} { user && <Button variant='outlined' onClick={() => {likeBlog(blog)}}>like</Button> } </Typography>
+      <Typography>Added by {blog.user.name}</Typography >
+      { OwnsBlog && <Button variant='outlined' onClick={() => deleteBlog(blog)}>delete</Button> }
+    </Box>
   )
 
 }
